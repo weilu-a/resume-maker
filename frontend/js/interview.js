@@ -1,16 +1,17 @@
 /* global ResumeBridge */
 (function () {
   var currentInterview = {
-    id: null,
-    techDirection: '',
-    companyType: '',
-    difficulty: 'intermediate',
-    resumeFile: null,
-    resumePath: '',
-    resumeText: '',
-    startTime: null,
-    messages: []
-  };
+  id: null,
+  techDirection: '',
+  companyType: '',
+  difficulty: 'intermediate',
+  resumeFile: null,
+  resumePath: '',
+  resumeText: '',
+  startTime: null,
+  messages: [],
+  summary: ''
+};
 
   var startingInterview = false;
   var sendingMessage = false;
@@ -52,29 +53,29 @@
   }
 
   function renderHistory() {
-    var list = $('history-list');
-    if (!list) return;
+  var list = $('history-list');
+  if (!list) return;
 
-    list.innerHTML = '';
-    interviewHistory.forEach(function (item) {
-      var card = document.createElement('div');
-      card.className = 'history-card p-3 rounded-xl cursor-pointer';
-      if (currentInterview.id === item.id) {
-        card.classList.add('active');
-      }
-      card.innerHTML =
-        '<div class="text-sm font-medium mb-1">' + escapeHtml(item.title || '面试记录') + '</div>' +
-        '<div class="text-[10px] text-[#666666]">' +
-        escapeHtml(item.date || '') +
-        ' • ' +
-        (item.messageCount || 0) +
-        '轮对话</div>';
-      card.onclick = function () {
-        loadHistoryItem(item);
-      };
-      list.appendChild(card);
-    });
-  }
+  list.innerHTML = '';
+  interviewHistory.forEach(function (item) {
+    var card = document.createElement('div');
+    card.className = 'history-card p-3 rounded-xl cursor-pointer';
+    if (currentInterview.id === item.id) {
+      card.classList.add('active');
+    }
+    card.innerHTML =
+      '<div class="text-sm font-medium mb-1">' + escapeHtml(item.title || '面试记录') + '</div>' +
+      '<div class="text-[10px] text-[#666666]">' +
+      escapeHtml(item.date || '') +
+      ' • ' +
+      (item.messageCount || 0) +
+      '轮对话</div>';
+    card.onclick = function () {
+      loadHistoryItem(item);
+    };
+    list.appendChild(card);
+  });
+}
 
   async function refreshHistoryFromDisk() {
     try {
@@ -119,25 +120,27 @@
   }
 
   function loadHistoryItem(item) {
-    currentInterview = {
-      id: item.id,
-      techDirection: item.techDirection || '',
-      companyType: item.companyType || '',
-      difficulty: item.difficulty || 'intermediate',
-      resumeFile: null,
-      resumePath: item.resumePath || '',
-      resumeText: item.resumeText || '',
-      startTime: null,
-      messages: (item.messages || []).slice()
-    };
-    showInterviewView();
-  }
+  currentInterview = {
+    id: item.id,
+    techDirection: item.techDirection || '',
+    companyType: item.companyType || '',
+    difficulty: item.difficulty || 'intermediate',
+    resumeFile: null,
+    resumePath: item.resumePath || '',
+    resumeText: item.resumeText || '',
+    startTime: null,
+    messages: (item.messages || []).slice(),
+    summary: item.summary || ''
+  };
+  showHistoryView();
+}
 
   function showSetupView() {
     currentView = 'setup';
     $('setup-view').classList.remove('hidden');
     $('interview-view').classList.add('hidden');
     $('interview-view').classList.remove('flex');
+    $('summary-view').classList.add('hidden');
   }
 
   function showInterviewView() {
@@ -145,6 +148,7 @@
     $('setup-view').classList.add('hidden');
     $('interview-view').classList.remove('hidden');
     $('interview-view').classList.add('flex');
+    $('summary-view').classList.add('hidden');
 
     $('interview-title').textContent =
       (techDirectionLabels[currentInterview.techDirection] || '技术') + '模拟';
@@ -153,8 +157,73 @@
     $('interview-company').textContent =
       companyTypeLabels[currentInterview.companyType] || currentInterview.companyType;
 
+    $('chat-input-container').classList.remove('hidden');
+    $('history-summary-container').classList.add('hidden');
+
     renderMessages();
     scrollToBottom();
+  }
+
+  function showHistoryView() {
+    currentView = 'interview';
+    $('setup-view').classList.add('hidden');
+    $('interview-view').classList.remove('hidden');
+    $('interview-view').classList.add('flex');
+    $('summary-view').classList.add('hidden');
+
+    $('interview-title').textContent =
+      (techDirectionLabels[currentInterview.techDirection] || '技术') + '历史';
+    $('interview-difficulty').textContent =
+      difficultyLabels[currentInterview.difficulty] || currentInterview.difficulty;
+    $('interview-company').textContent =
+      companyTypeLabels[currentInterview.companyType] || currentInterview.companyType;
+
+    $('chat-input-container').classList.add('hidden');
+    $('history-summary-container').classList.remove('hidden');
+
+    renderMessages();
+    scrollToBottom();
+  }
+
+  function showSummaryView() {
+    currentView = 'summary';
+    $('setup-view').classList.add('hidden');
+    $('interview-view').classList.add('hidden');
+    $('interview-view').classList.remove('flex');
+    $('summary-view').classList.remove('hidden');
+
+    $('summary-subtitle').textContent =
+      (techDirectionLabels[currentInterview.techDirection] || '技术') +
+      ' · ' +
+      (companyTypeLabels[currentInterview.companyType] || '企业') +
+      ' · ' +
+      (difficultyLabels[currentInterview.difficulty] || currentInterview.difficulty);
+
+    var contentEl = $('summary-content');
+    if (currentInterview.summary) {
+      contentEl.innerHTML = parseMarkdown(currentInterview.summary);
+    } else {
+      contentEl.innerHTML =
+        '<div class="text-center text-[#666666] py-8">' +
+        '<iconify-icon class="text-4xl text-[#4F8CFF] mb-4 inline-block" icon="ph:file-text"></iconify-icon>' +
+        '<p>暂无面试总结</p>' +
+        '</div>';
+    }
+  }
+
+  function parseMarkdown(text) {
+    if (!text) return '';
+    var html = text
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    html = html.replace(/^## (.+)$/gm, '<h3 class="text-lg font-bold text-white mt-6 mb-3">$1</h3>');
+    html = html.replace(/^### (.+)$/gm, '<h4 class="text-base font-semibold text-white mt-4 mb-2">$1</h4>');
+    html = html.replace(/^\- (.+)$/gm, '<li class="text-sm text-[#AAAAAA] mb-2">$1</li>');
+    html = html.replace(/<\/li>\n<li/g, '</li>\n<li');
+    html = html.replace(/(<li[^>]*>[\s\S]*<\/li>)/g, '<ul class="list-disc pl-5 space-y-1">$1</ul>');
+    html = html.replace(/<\/ul>\n<ul>/g, '');
+    html = html.replace(/\n\n/g, '<br><br>');
+    return html;
   }
 
   function renderMessages() {
@@ -253,21 +322,22 @@
   }
 
   function buildSavePayload() {
-    return {
-      id: currentInterview.id,
-      title:
-        (techDirectionLabels[currentInterview.techDirection] || '技术') +
-        '-' +
-        (companyTypeLabels[currentInterview.companyType] || '面试'),
-      tech_direction: currentInterview.techDirection,
-      company_type: currentInterview.companyType,
-      difficulty: currentInterview.difficulty,
-      start_time: currentInterview.startTime,
-      messages: currentInterview.messages,
-      resume_text: currentInterview.resumeText || '',
-      resume_path: currentInterview.resumePath || ''
-    };
-  }
+  return {
+    id: currentInterview.id,
+    title:
+      (techDirectionLabels[currentInterview.techDirection] || '技术') +
+      '-' +
+      (companyTypeLabels[currentInterview.companyType] || '面试'),
+    tech_direction: currentInterview.techDirection,
+    company_type: currentInterview.companyType,
+    difficulty: currentInterview.difficulty,
+    start_time: currentInterview.startTime,
+    messages: currentInterview.messages,
+    resume_text: currentInterview.resumeText || '',
+    resume_path: currentInterview.resumePath || '',
+    summary: currentInterview.summary || ''
+  };
+}
 
   function resetSetupForm() {
     currentInterview = {
@@ -323,11 +393,61 @@
         }
       }
       await refreshHistoryFromDisk();
-      resetSetupForm();
       renderHistory();
-      showSetupView();
     } finally {
       exitingInterview = false;
+    }
+  }
+
+  async function generateAndShowSummary() {
+    var contentEl = $('summary-content');
+    contentEl.innerHTML =
+      '<div class="text-center text-[#666666] py-8">' +
+      '<iconify-icon class="text-4xl text-[#4F8CFF] mb-4 inline-block animate-spin" icon="ph:loader"></iconify-icon>' +
+      '<p>AI 正在生成面试总结...</p>' +
+      '</div>';
+
+    showSummaryView();
+
+    try {
+      var payload = {
+        company_type: currentInterview.companyType,
+        tech_direction: currentInterview.techDirection,
+        difficulty: currentInterview.difficulty,
+        resume_text: currentInterview.resumeText || '',
+        messages: currentInterview.messages.map(function (m) {
+          return { role: m.role, content: m.content };
+        })
+      };
+
+      var result = await ResumeBridge.apiCall('interview_summary', JSON.stringify(payload));
+
+      if (!result || !result.ok) {
+        currentInterview.summary = '';
+        contentEl.innerHTML =
+          '<div class="text-center text-[#666666] py-8">' +
+          '<iconify-icon class="text-4xl text-[#FF4D4F] mb-4 inline-block" icon="ph:alert-circle"></iconify-icon>' +
+          '<p>AI 生成总结失败</p>' +
+          '<p class="text-xs mt-2 text-[#888]">' + ((result && result.error) || '') + '</p>' +
+          '</div>';
+        ResumeBridge.showToast((result && result.error) || '生成总结失败', 'warn');
+      } else {
+        currentInterview.summary = result.summary || '';
+        contentEl.innerHTML = parseMarkdown(currentInterview.summary);
+        ResumeBridge.showToast('面试总结已生成', 'ok');
+      }
+
+      await persistAndExit();
+    } catch (e) {
+      currentInterview.summary = '';
+      contentEl.innerHTML =
+        '<div class="text-center text-[#666666] py-8">' +
+        '<iconify-icon class="text-4xl text-[#FF4D4F] mb-4 inline-block" icon="ph:alert-circle"></iconify-icon>' +
+        '<p>生成总结时发生错误</p>' +
+        '<p class="text-xs mt-2 text-[#888]">' + (e.message || String(e)) + '</p>' +
+        '</div>';
+      ResumeBridge.showToast(e.message || String(e), 'warn');
+      await persistAndExit();
     }
   }
 
@@ -464,7 +584,7 @@
   }
 
   function endInterview() {
-    persistAndExit();
+    generateAndShowSummary();
   }
 
   async function restartInterview() {
@@ -569,6 +689,8 @@
 
   window.showSetupView = showSetupView;
   window.showInterviewView = showInterviewView;
+  window.showHistoryView = showHistoryView;
+  window.showSummaryView = showSummaryView;
   window.startInterview = startInterview;
   window.endInterview = endInterview;
   window.restartInterview = restartInterview;

@@ -11,7 +11,7 @@ from typing import Any
 import webview
 
 from app.ai import deepseek_client
-from app.ai.interview_agent import get_opening, reply as interview_agent_reply
+from app.ai.interview_agent import get_opening, reply as interview_agent_reply, generate_summary as interview_summary_gen
 from app.ai.ollama_client import check_health
 from app.ai.ollama_runtime import ensure_ollama_ready
 from app.interview.store import list_interviews as list_saved_interviews
@@ -121,6 +121,22 @@ class ApiBridge:
             )
         except Exception as e:
             return {"ok": False, "error": str(e), "speech": "", "end_interview": False}
+
+    def interview_summary(self, payload_json: str) -> dict[str, Any]:
+        try:
+            payload = json.loads(payload_json) if isinstance(payload_json, str) else payload_json
+            messages = payload.get("messages") or []
+            return interview_summary_gen(
+                messages,
+                company_type=payload.get("company_type") or payload.get("companyType") or "bigtech",
+                tech_direction=payload.get("tech_direction")
+                or payload.get("techDirection")
+                or "frontend",
+                difficulty=payload.get("difficulty") or "intermediate",
+                resume_text=payload.get("resume_text") or payload.get("resumeText") or "",
+            )
+        except Exception as e:
+            return {"ok": False, "error": str(e), "summary": ""}
 
     def save_interview(self, payload_json: str) -> dict[str, Any]:
         try:

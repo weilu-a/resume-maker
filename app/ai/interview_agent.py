@@ -215,3 +215,81 @@ def reply(
     out["model"] = result.get("model")
     out["provider"] = result.get("provider") or ""
     return out
+
+
+def build_summary_prompt(
+    company_type: str,
+    tech_direction: str,
+    difficulty: str,
+    resume_text: str,
+) -> str:
+    company = COMPANY_LABELS.get(company_type, company_type or "互联网大厂")
+    tech = TECH_LABELS.get(tech_direction, tech_direction or "技术")
+    level = DIFFICULTY_LABELS.get(difficulty, difficulty or "中级")
+    resume = _truncate_resume(resume_text)
+
+    return (
+        f"你是{company}的{tech}面试官，本场难度为「{level}」。\n"
+        "\n"
+        "【候选人简历】\n"
+        f"{resume}\n"
+        "\n"
+        "【任务】\n"
+        "请根据面试对话历史，对候选人的表现进行全面总结分析。\n"
+        "\n"
+        "【输出格式｜强制】\n"
+        "使用 Markdown 格式输出，结构如下：\n"
+        "\n"
+        "## 🌟 回答亮点\n"
+        "- 要点一：具体说明哪些回答做得好，为什么好\n"
+        "- 要点二：具体说明哪些回答做得好，为什么好\n"
+        "\n"
+        "## 📝 待改进之处\n"
+        "- 问题一：具体说明哪些回答需要改进，问题在哪里\n"
+        "- 问题二：具体说明哪些回答需要改进，问题在哪里\n"
+        "\n"
+        "## 💡 优化建议\n"
+        "- 建议一：针对上述问题给出具体的改进建议\n"
+        "- 建议二：针对上述问题给出具体的改进建议\n"
+        "\n"
+        "注意：\n"
+        "- 每个部分至少列出 2-3 个要点\n"
+        "- 分析要具体、有针对性，结合对话内容\n"
+        "- 语言简洁明了，便于候选人理解和改进\n"
+    )
+
+
+def generate_summary(
+    messages: list[dict[str, Any]],
+    *,
+    company_type: str,
+    tech_direction: str,
+    difficulty: str,
+    resume_text: str,
+) -> dict[str, Any]:
+    """Generate interview summary from conversation history."""
+    system = build_summary_prompt(company_type, tech_direction, difficulty, resume_text)
+    history = _history_for_prompt(messages)
+    user_block = (
+        "以下是完整的面试对话历史，请基于此生成面试总结。\n"
+        "【对话历史】\n"
+        f"{history}\n"
+        "\n"
+        "请按照要求的格式输出总结。"
+    )
+
+    result = _call_llm(system, user_block)
+    if not result.get("ok"):
+        return {
+            "ok": False,
+            "error": result.get("error") or "AI 调用失败",
+            "summary": "",
+        }
+
+    raw = result.get("content") or ""
+    return {
+        "ok": True,
+        "summary": raw.strip(),
+        "model": result.get("model"),
+        "provider": result.get("provider") or "",
+    }

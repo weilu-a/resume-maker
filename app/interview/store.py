@@ -41,6 +41,7 @@ def save_interview(session: dict[str, Any]) -> dict[str, Any]:
     difficulty = session.get("difficulty") or "intermediate"
     messages = session.get("messages") or []
     resume_text = session.get("resume_text") or session.get("resumeText") or ""
+    summary = session.get("summary") or ""
     start_time = session.get("start_time") or session.get("startTime")
     ended_at = datetime.now().isoformat(timespec="seconds")
 
@@ -62,6 +63,7 @@ def save_interview(session: dict[str, Any]) -> dict[str, Any]:
         "resume_preview": (resume_text or "")[:500],
         "resume_text": resume_text or "",
         "resume_path": session.get("resume_path") or session.get("resumePath") or "",
+        "summary": summary,
     }
 
     path = _session_path(session_id)
@@ -98,6 +100,7 @@ def list_interviews(limit: int = 50) -> list[dict[str, Any]]:
                 "messages": data.get("messages") or [],
                 "resumePath": data.get("resume_path") or "",
                 "resumeText": data.get("resume_text") or "",
+                "summary": data.get("summary") or "",
             }
         )
     return items
