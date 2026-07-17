@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>简历工坊 - 模拟面试</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<style>
+        body { background-color: #1A1A1A; color: #FFFFFF; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .sidebar-item-active { background-color: #2D2D2D; border-left: 4px solid #4F8CFF; color: #4F8CFF; }
+        .glass-card { background: rgba(45, 45, 45, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .chat-bubble-ai { background-color: #2D2D2D; color: #E5E5E5; border-radius: 4px 20px 20px 20px; }
+        .chat-bubble-user { background-color: #4F8CFF; color: #FFFFFF; border-radius: 20px 4px 20px 20px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3A3A3A; border-radius: 3px; }
+        .markdown-content p { margin-bottom: 0.5rem; }
+        .markdown-content ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+<!-- 侧边栏 (同main.html) -->
+<aside class="w-[220px] bg-[#1E1E1E] flex flex-col border-r border-[#3A3A3A] flex-none">
+<div class="p-6">
+<div class="flex items-center space-x-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A]">
+<iconify-icon class="text-xl" icon="ph:user-bold"></iconify-icon>
+</div>
+<div>
+<div class="text-sm font-medium">简历探险者</div>
+<div class="flex items-center space-x-1">
+<span class="text-[10px] px-1.5 py-0.5 bg-[#3A3A3A] rounded text-[#AAAAAA]">个人版</span>
+<span class="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-600 rounded text-black font-bold">VIP</span>
+</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="main.html">
+<iconify-icon class="text-xl" icon="heroicons:home-solid"></iconify-icon>
+<span>首页</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="generate.html">
+<iconify-icon class="text-xl" icon="heroicons:document-plus-solid"></iconify-icon>
+<span>生成简历</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="optimize.html">
+<iconify-icon class="text-xl" icon="heroicons:sparkles-solid"></iconify-icon>
+<span>简历优化</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg sidebar-item-active" href="interview.html">
+<iconify-icon class="text-xl" icon="heroicons:chat-bubble-left-right-solid"></iconify-icon>
+<span>模拟面试</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:square-3-stack-3d-solid"></iconify-icon>
+<span>模板库</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:clock-solid"></iconify-icon>
+<span>历史记录</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-[#3A3A3A]">
+<a class="flex items-center space-x-3 px-4 py-2 rounded-lg text-[#666666] hover:text-[#AAAAAA] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:cog-6-tooth-solid"></iconify-icon>
+<span>设置</span>
+</a>
+</div>
+</aside>
+<!-- 面试控制栏 (280px) -->
+<aside class="w-[280px] bg-[#1A1A1A] border-r border-[#3A3A3A] flex flex-col flex-none overflow-y-auto custom-scrollbar">
+<div class="p-6">
+<button class="w-full accent-btn py-3 rounded-xl flex items-center justify-center space-x-2 font-bold mb-8">
+<iconify-icon icon="ph:plus-circle-bold"></iconify-icon>
+<span>开启新面试</span>
+</button>
+<div class="space-y-6">
+<section>
+<h4 class="text-xs font-bold text-[#666666] uppercase tracking-wider mb-4">面试设置</h4>
+<div class="space-y-4">
+<div>
+<label class="block text-xs text-[#AAAAAA] mb-1.5">目标岗位</label>
+<input class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm focus:border-[#4F8CFF] outline-none" type="text" value="前端开发工程师"/>
+</div>
+<div>
+<label class="block text-xs text-[#AAAAAA] mb-1.5">企业类型</label>
+<select class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm focus:border-[#4F8CFF] outline-none text-white">
+<option>互联网大厂</option>
+<option>跨国名企</option>
+<option>国企/事业单位</option>
+<option>成长型创业公司</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-[#AAAAAA] mb-1.5">面试难度</label>
+<div class="flex p-1 bg-[#252525] rounded-lg border border-[#3A3A3A]">
+<button class="flex-1 py-1 text-[10px] rounded-md text-[#AAAAAA]">初级</button>
+<button class="flex-1 py-1 text-[10px] rounded-md bg-[#3A3A3A] text-white">中级</button>
+<button class="flex-1 py-1 text-[10px] rounded-md text-[#AAAAAA]">资深</button>
+</div>
+</div>
+<div>
+<label class="block text-xs text-[#AAAAAA] mb-1.5">面试官风格</label>
+<select class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm focus:border-[#4F8CFF] outline-none text-white">
+<option>专业沉稳</option>
+<option>温和鼓励</option>
+<option>压力面试</option>
+</select>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-xs font-bold text-[#666666] uppercase tracking-wider">历史面试</h4>
+<button class="text-[10px] text-[#4F8CFF]">清除记录</button>
+</div>
+<div class="space-y-2">
+<div class="p-3 bg-[#252525] rounded-xl border border-[#4F8CFF]/20 cursor-pointer">
+<div class="text-sm font-medium mb-1">前端开发-腾讯二面模拟</div>
+<div class="text-[10px] text-[#666666]">2024-07-13 • 15轮对话</div>
+</div>
+<div class="p-3 hover:bg-[#252525] rounded-xl border border-transparent cursor-pointer transition-colors text-[#AAAAAA]">
+<div class="text-sm font-medium mb-1">产品经理-美团校招</div>
+<div class="text-[10px] text-[#666666]">2024-07-10 • 8轮对话</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</aside>
+<!-- 主对话区 -->
+<main class="flex-1 flex flex-col min-w-0 bg-[#121212]">
+<!-- 对话头部 -->
+<header class="h-16 border-b border-[#3A3A3A] flex items-center justify-between px-8 bg-[#1A1A1A]">
+<div class="flex items-center space-x-3">
+<h2 class="font-bold text-lg">当前面试：前端开发模拟</h2>
+<div class="flex space-x-2">
+<span class="text-[10px] px-2 py-0.5 bg-[#4F8CFF]/10 text-[#4F8CFF] rounded">中级</span>
+<span class="text-[10px] px-2 py-0.5 bg-[#3A3A3A] text-[#AAAAAA] rounded">互联网大厂</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="flex items-center space-x-1 text-sm text-[#AAAAAA] hover:text-white transition-colors">
+<iconify-icon icon="ph:clock-counter-clockwise"></iconify-icon>
+<span>重新开始</span>
+</button>
+<button class="px-4 py-1.5 bg-[#FF4D4F]/10 text-[#FF4D4F] border border-[#FF4D4F]/20 rounded-lg text-sm hover:bg-[#FF4D4F]/20 transition-all">结束面试</button>
+</div>
+</header>
+<!-- 消息列表 -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8" id="chat-container">
+<!-- AI 消息 -->
+<div class="flex items-start space-x-4 max-w-4xl">
+<div class="w-10 h-10 rounded-full bg-[#3A3A3A] flex items-center justify-center text-[#4F8CFF] flex-none">
+<iconify-icon class="text-2xl" icon="ph:robot-fill"></iconify-icon>
+</div>
+<div class="chat-bubble-ai p-5 shadow-lg max-w-[80%]">
+<div class="markdown-content text-sm leading-relaxed">
+<p>你好，我是你今天的 AI 面试官。我已经审阅了你的简历，了解到你曾在某科技公司担任高级前端工程师，并且有很好的组件化开发经验。</p>
+<p>根据你申请的<b>互联网大厂-前端开发</b>岗位要求，我将对你进行一场中等难度的面试。我会重点关注你的技术深度、项目经验以及解决问题的能力。</p>
+<p>准备好了吗？首先请向我简单介绍一下你的项目经验，特别是你在简历中提到的 Webpack 性能调优的细节。</p>
+</div>
+</div>
+</div>
+<!-- 用户消息 -->
+<div class="flex items-start space-x-4 flex-row-reverse space-x-reverse max-w-4xl ml-auto">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A] flex-none">
+<iconify-icon class="text-xl" icon="ph:user-bold"></iconify-icon>
+</div>
+<div class="chat-bubble-user p-5 shadow-lg max-w-[80%]">
+<div class="text-sm leading-relaxed">
+<p>你好！我已经准备好了。关于 Webpack 性能调优，我主要从减少构建时间和缩小包体积两个方面入手。我通过分析插件找到了占用时间最长的 loader，并引入了多进程并行构建...</p>
+</div>
+</div>
+</div>
+<!-- AI 消息 (回复) -->
+<div class="flex items-start space-x-4 max-w-4xl" id="typing-indicator" style="display: none;">
+<div class="w-10 h-10 rounded-full bg-[#3A3A3A] flex items-center justify-center text-[#4F8CFF] flex-none">
+<iconify-icon class="text-2xl" icon="ph:robot-fill"></iconify-icon>
+</div>
+<div class="chat-bubble-ai p-5 shadow-lg flex items-center space-x-2">
+<div class="w-1.5 h-1.5 bg-[#AAAAAA] rounded-full animate-bounce"></div>
+<div class="w-1.5 h-1.5 bg-[#AAAAAA] rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+<div class="w-1.5 h-1.5 bg-[#AAAAAA] rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+</div>
+</div>
+</div>
+<!-- 输入区 -->
+<div class="p-8 border-t border-[#3A3A3A] bg-[#1A1A1A]">
+<div class="max-w-4xl mx-auto relative">
+<textarea class="w-full bg-[#252525] border border-[#3A3A3A] rounded-2xl p-4 pr-32 text-sm text-white focus:border-[#4F8CFF] outline-none resize-none custom-scrollbar" id="chat-input" placeholder="在此输入你的回答..." rows="3"></textarea>
+<div class="absolute right-3 bottom-3 flex items-center space-x-2">
+<button class="p-2 text-[#666666] hover:text-[#AAAAAA]"><iconify-icon class="text-xl" icon="ph:microphone"></iconify-icon></button>
+<button class="bg-[#4F8CFF] text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 hover:bg-[#4070FF] transition-colors" onclick="sendMessage()">
+<span>发送</span>
+<iconify-icon icon="ph:paper-plane-right-fill"></iconify-icon>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-[#444] mt-4 uppercase tracking-widest">AI 面试助手生成的回复可能存在偏差，仅供模拟演练参考</p>
+</div>
+</main>
+<script>
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatContainer = document.getElementById('chat-container');
+            
+            // 添加用户消息
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex items-start space-x-4 flex-row-reverse space-x-reverse max-w-4xl ml-auto';
+            userMsg.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A] flex-none">
+                    <iconify-icon icon="ph:user-bold" class="text-xl"></iconify-icon>
+                </div>
+                <div class="chat-bubble-user p-5 shadow-lg max-w-[80%]">
+                    <div class="text-sm leading-relaxed"><p>${text}</p></div>
+                </div>
+            `;
+            chatContainer.appendChild(userMsg);
+            
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // 模拟 AI 回复
+            const typing = document.getElementById('typing-indicator');
+            chatContainer.appendChild(typing);
+            typing.style.display = 'flex';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            setTimeout(() => {
+                typing.style.display = 'none';
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'flex items-start space-x-4 max-w-4xl';
+                aiMsg.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-[#3A3A3A] flex items-center justify-center text-[#4F8CFF] flex-none">
+                        <iconify-icon icon="ph:robot-fill" class="text-2xl"></iconify-icon>
+                    </div>
+                    <div class="chat-bubble-ai p-5 shadow-lg max-w-[80%]">
+                        <div class="markdown-content text-sm leading-relaxed">
+                            <p>很有意思的思路。在处理多进程构建时，你是如何解决缓存同步问题的？另外，对于最终生成的包体积，你使用了哪些具体的 Webpack 插件进行深度分析和优化？</p>
+                        </div>
+                    </div>
+                `;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1500);
+        }
+
+        // 回车发送 (Shift+Enter 换行)
+        document.getElementById('chat-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

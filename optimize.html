@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>简历工坊 - 简历优化</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/echarts.min.js"></script>
+<style>
+        body { background-color: #1A1A1A; color: #FFFFFF; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .sidebar-item-active { background-color: #2D2D2D; border-left: 4px solid #4F8CFF; color: #4F8CFF; }
+        .glass-card { background: rgba(45, 45, 45, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .diff-added { background-color: rgba(16, 185, 129, 0.1); border-left: 2px solid #10B981; color: #10B981; }
+        .drop-zone.active { border-color: #4F8CFF; background-color: rgba(79, 140, 255, 0.05); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3A3A3A; border-radius: 3px; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+<!-- 侧边栏 -->
+<aside class="w-[220px] bg-[#1E1E1E] flex flex-col border-r border-[#3A3A3A] flex-none">
+<div class="p-6">
+<div class="flex items-center space-x-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A]">
+<iconify-icon class="text-xl" icon="ph:user-bold"></iconify-icon>
+</div>
+<div>
+<div class="text-sm font-medium">简历探险者</div>
+<div class="flex items-center space-x-1">
+<span class="text-[10px] px-1.5 py-0.5 bg-[#3A3A3A] rounded text-[#AAAAAA]">个人版</span>
+<span class="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-600 rounded text-black font-bold">VIP</span>
+</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="main.html">
+<iconify-icon class="text-xl" icon="heroicons:home-solid"></iconify-icon>
+<span>首页</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="generate.html">
+<iconify-icon class="text-xl" icon="heroicons:document-plus-solid"></iconify-icon>
+<span>生成简历</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg sidebar-item-active" href="optimize.html">
+<iconify-icon class="text-xl" icon="heroicons:sparkles-solid"></iconify-icon>
+<span>简历优化</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="interview.html">
+<iconify-icon class="text-xl" icon="heroicons:chat-bubble-left-right-solid"></iconify-icon>
+<span>模拟面试</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:square-3-stack-3d-solid"></iconify-icon>
+<span>模板库</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:clock-solid"></iconify-icon>
+<span>历史记录</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-[#3A3A3A]">
+<a class="flex items-center space-x-3 px-4 py-2 rounded-lg text-[#666666] hover:text-[#AAAAAA] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:cog-6-tooth-solid"></iconify-icon>
+<span>设置</span>
+</a>
+</div>
+</aside>
+<!-- 主内容区 -->
+<main class="flex-1 flex flex-col min-w-0">
+<!-- 顶部 -->
+<header class="h-16 border-b border-[#3A3A3A] flex items-center justify-between px-8 bg-[#1A1A1A] z-10">
+<h1 class="text-lg font-bold">简历智能优化 <span class="text-sm font-normal text-[#666666] ml-2">提升求职竞争力的 AI 引擎</span></h1>
+<div class="hidden items-center space-x-4" id="action-btns">
+<button class="px-4 py-1.5 rounded-lg bg-[#2D2D2D] text-sm text-[#AAAAAA] hover:text-white transition-colors border border-[#3A3A3A]">重新上传</button>
+<button class="px-6 py-1.5 rounded-lg bg-[#4F8CFF] hover:bg-[#4070FF] transition-colors text-sm font-medium">导出优化版</button>
+</div>
+</header>
+<div class="flex-1 relative overflow-hidden">
+<!-- 上传视图 -->
+<div class="h-full flex flex-col items-center justify-center p-8" id="upload-view">
+<div class="w-full max-w-2xl border-2 border-dashed border-[#3A3A3A] rounded-3xl p-16 flex flex-col items-center justify-center hover:border-[#4F8CFF] hover:bg-[#252525] transition-all cursor-pointer group" id="drop-zone" onclick="startOptimizing()">
+<div class="w-20 h-20 bg-[#4F8CFF]/10 rounded-full flex items-center justify-center text-[#4F8CFF] mb-6 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-5xl" icon="ph:file-arrow-up-duotone"></iconify-icon>
+</div>
+<h3 class="text-xl font-bold mb-2">点击或拖拽上传简历</h3>
+<p class="text-[#666666] mb-8">支持 PDF、Word、PPT 格式 (不超过 20MB)</p>
+<div class="flex items-center space-x-6 text-[#AAAAAA]">
+<div class="flex items-center space-x-2">
+<iconify-icon icon="ph:text-aa-bold"></iconify-icon>
+<span class="text-sm">内容矫正</span>
+</div>
+<div class="flex items-center space-x-2">
+<iconify-icon icon="ph:layout-bold"></iconify-icon>
+<span class="text-sm">排版美化</span>
+</div>
+<div class="flex items-center space-x-2">
+<iconify-icon icon="ph:chart-line-up-bold"></iconify-icon>
+<span class="text-sm">能力提炼</span>
+</div>
+</div>
+</div>
+<div class="mt-12 w-full max-w-2xl">
+<h4 class="text-sm text-[#666666] mb-4 uppercase tracking-wider">最近优化的简历</h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#252525] p-4 rounded-xl flex items-center space-x-3 cursor-pointer hover:bg-[#2D2D2D] transition-colors">
+<div class="w-8 h-10 bg-[#3A3A3A] rounded flex items-center justify-center text-[#AAAAAA]"><iconify-icon icon="ph:file-pdf"></iconify-icon></div>
+<div>
+<div class="text-sm font-medium">后端开发-2024.pdf</div>
+<div class="text-[10px] text-[#666666]">3天前优化 • 匹配度 92%</div>
+</div>
+</div>
+<div class="bg-[#252525] p-4 rounded-xl flex items-center space-x-3 cursor-pointer hover:bg-[#2D2D2D] transition-colors">
+<div class="w-8 h-10 bg-[#3A3A3A] rounded flex items-center justify-center text-[#AAAAAA]"><iconify-icon icon="ph:file-doc"></iconify-icon></div>
+<div>
+<div class="text-sm font-medium">市场营销简历.docx</div>
+<div class="text-[10px] text-[#666666]">1周前优化 • 匹配度 85%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 优化中动画 -->
+<div class="hidden h-full flex flex-col items-center justify-center" id="optimizing-view">
+<div class="relative w-32 h-32 mb-8">
+<div class="absolute inset-0 rounded-full border-4 border-t-[#4F8CFF] animate-spin"></div>
+<div class="absolute inset-4 rounded-full border-4 border-b-[#10B981] animate-reverse-spin"></div>
+<div class="absolute inset-0 flex items-center justify-center text-3xl text-[#4F8CFF]">
+<iconify-icon icon="ph:sparkles-fill"></iconify-icon>
+</div>
+</div>
+<h3 class="text-2xl font-bold mb-3">AI 深度优化中</h3>
+<div class="flex space-x-2 text-[#AAAAAA]">
+<span id="loading-text">正在分析原始文案...</span>
+</div>
+</div>
+<!-- 结果视图 -->
+<div class="hidden h-full flex flex-col overflow-hidden" id="result-view">
+<!-- 评分条 -->
+<div class="bg-[#252525] px-8 py-4 border-b border-[#3A3A3A] flex items-center justify-between">
+<div class="flex items-center space-x-8">
+<div class="flex items-center space-x-3">
+<div id="score-chart" style="width: 50px; height: 50px;"></div>
+<div>
+<div class="text-sm font-bold">综合匹配度</div>
+<div class="text-xs text-[#10B981]">提升了 15%</div>
+</div>
+</div>
+<div class="h-10 w-[1px] bg-[#3A3A3A]"></div>
+<div class="flex space-x-6">
+<div class="text-center">
+<div class="text-xs text-[#666666] mb-1">能力匹配</div>
+<div class="text-sm font-bold">94%</div>
+</div>
+<div class="text-center">
+<div class="text-xs text-[#666666] mb-1">经验密度</div>
+<div class="text-sm font-bold">88%</div>
+</div>
+<div class="text-center">
+<div class="text-xs text-[#666666] mb-1">行业关键词</div>
+<div class="text-sm font-bold">96%</div>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-2 bg-[#1A1A1A] p-1 rounded-lg border border-[#3A3A3A]">
+<button class="px-4 py-1.5 text-xs rounded-md bg-[#3A3A3A] text-white">对照模式</button>
+<button class="px-4 py-1.5 text-xs rounded-md text-[#AAAAAA]">优化后</button>
+</div>
+</div>
+<div class="flex-1 flex overflow-hidden">
+<!-- 左侧：原始 -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 bg-[#1E1E1E]">
+<div class="mb-6 flex items-center justify-between">
+<h4 class="text-xs font-bold text-[#666666] uppercase tracking-widest">原始简历内容</h4>
+<span class="text-[10px] text-[#AAAAAA]">上传于 2024-07-13</span>
+</div>
+<div class="space-y-6 text-sm text-[#AAAAAA] leading-relaxed">
+<div class="border-b border-[#3A3A3A] pb-4">
+<h5 class="text-white font-bold mb-2 text-base">工作经历：某科技公司 - 前端工程师</h5>
+<p>负责公司网站的开发和维护。使用了 Vue 框架，修复了很多 Bug。参与了几个新功能的上线。</p>
+</div>
+<div class="border-b border-[#3A3A3A] pb-4">
+<h5 class="text-white font-bold mb-2 text-base">自我评价</h5>
+<p>本人性格开朗，工作负责，学习能力强，能吃苦耐劳。</p>
+</div>
+</div>
+</div>
+<!-- 中间：优化建议 -->
+<div class="w-80 border-x border-[#3A3A3A] bg-[#222] overflow-y-auto custom-scrollbar">
+<div class="p-4 border-b border-[#3A3A3A] bg-[#252525]">
+<h4 class="text-xs font-bold text-[#AAAAAA] uppercase">AI 优化建议清单</h4>
+</div>
+<div class="divide-y divide-[#3A3A3A]">
+<div class="p-4 hover:bg-[#2D2D2D] transition-colors cursor-pointer">
+<div class="flex items-center space-x-2 text-[#10B981] mb-2">
+<iconify-icon icon="ph:check-circle-bold"></iconify-icon>
+<span class="text-xs font-bold">动词强化</span>
+</div>
+<p class="text-[11px] text-[#AAAAAA] leading-snug">建议将 "负责开发" 改为 "主导构建"，更体现主动性和架构能力。</p>
+</div>
+<div class="p-4 hover:bg-[#2D2D2D] transition-colors cursor-pointer">
+<div class="flex items-center space-x-2 text-[#4F8CFF] mb-2">
+<iconify-icon icon="ph:info-bold"></iconify-icon>
+<span class="text-xs font-bold">数据量化</span>
+</div>
+<p class="text-[11px] text-[#AAAAAA] leading-snug">"修复了很多Bug" 建议量化，如 "通过自动化测试将缺陷率降低 30%"。</p>
+</div>
+<div class="p-4 hover:bg-[#2D2D2D] transition-colors cursor-pointer">
+<div class="flex items-center space-x-2 text-[#8B5CF6] mb-2">
+<iconify-icon icon="ph:star-bold"></iconify-icon>
+<span class="text-xs font-bold">专业词汇</span>
+</div>
+<p class="text-[11px] text-[#AAAAAA] leading-snug">已自动补充 "性能优化"、"前端工程化" 等行业核心关键词。</p>
+</div>
+</div>
+</div>
+<!-- 右侧：优化后 -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 bg-[#1A1A1A]">
+<div class="mb-6 flex items-center justify-between">
+<h4 class="text-xs font-bold text-[#4F8CFF] uppercase tracking-widest">AI 优化版内容</h4>
+<span class="text-[10px] px-2 py-0.5 bg-[#10B981]/20 text-[#10B981] rounded">已美化文案</span>
+</div>
+<div class="space-y-6 text-sm text-white leading-relaxed">
+<div class="border-b border-[#3A3A3A] pb-4">
+<h5 class="text-[#4F8CFF] font-bold mb-2 text-base">工作经历：某科技公司 - 高级前端工程师</h5>
+<p class="diff-added p-3 rounded-lg">主导构建了公司级核心业务系统的组件化架构，利用 Vue3 全家桶重构了陈旧代码，通过实施 Webpack 性能调优，将打包效率提升 50%，并成功将系统首屏渲染时间控制在 1.2s 以内。</p>
+</div>
+<div class="border-b border-[#3A3A3A] pb-4">
+<h5 class="text-[#4F8CFF] font-bold mb-2 text-base">专业亮点</h5>
+<p class="diff-added p-3 rounded-lg">深耕前端领域 3 年，具备大型 SaaS 系统架构经验。精通常用算法与设计模式，具备较强的技术攻关能力和跨团队沟通协作能力，在工程化实践方面有深度见解。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<style>
+        @keyframes reverse-spin {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        .animate-reverse-spin {
+            animation: reverse-spin 1.5s linear infinite;
+        }
+    </style>
+<script>
+        function startOptimizing() {
+            document.getElementById('upload-view').classList.add('hidden');
+            document.getElementById('optimizing-view').classList.remove('hidden');
+            
+            const steps = [
+                "正在分析原始文案...",
+                "正在提取行业关键词...",
+                "正在基于 GPT-4 进行专业美化...",
+                "正在对齐排版格式...",
+                "完成！"
+            ];
+            
+            let current = 0;
+            const interval = setInterval(() => {
+                document.getElementById('loading-text').innerText = steps[current];
+                current++;
+                if (current >= steps.length) {
+                    clearInterval(interval);
+                    showResult();
+                }
+            }, 800);
+        }
+
+        function showResult() {
+            document.getElementById('optimizing-view').classList.add('hidden');
+            document.getElementById('result-view').classList.remove('hidden');
+            document.getElementById('action-btns').classList.remove('hidden');
+            document.getElementById('action-btns').classList.add('flex');
+            
+            initChart();
+        }
+
+        function initChart() {
+            const chartDom = document.getElementById('score-chart');
+            const myChart = echarts.init(chartDom);
+            const option = {
+                series: [
+                    {
+                        type: 'pie',
+                        radius: ['70%', '90%'],
+                        avoidLabelOverlap: false,
+                        label: { show: false },
+                        emphasis: { disabled: true },
+                        data: [
+                            { 
+                                value: 92, 
+                                itemStyle: { color: '#4F8CFF' } 
+                            },
+                            { 
+                                value: 8, 
+                                itemStyle: { color: '#3A3A3A' } 
+                            }
+                        ]
+                    },
+                    {
+                        type: 'gauge',
+                        center: ['50%', '50%'],
+                        radius: '0%',
+                        detail: {
+                            show: true,
+                            offsetCenter: [0, 0],
+                            formatter: '92',
+                            fontSize: 14,
+                            fontWeight: 'bold',
+                            color: '#FFFFFF'
+                        },
+                        data: [{ value: 92 }]
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>简历工坊 - 模拟面试</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<link rel="stylesheet" href="css/app.css"/>
+</head>
+<body class="h-screen flex overflow-hidden">
+<aside class="w-[220px] bg-[#1E1E1E] flex flex-col border-r border-[#3A3A3A] flex-none">
+<div class="p-6">
+<div class="flex items-center space-x-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A]">
+<iconify-icon class="text-xl" icon="ph:user-bold"></iconify-icon>
+</div>
+<div>
+<div class="text-sm font-medium">简历探险者</div>
+<div class="flex items-center space-x-1 mt-1">
+<span class="text-[10px] px-1.5 py-0.5 bg-[#3A3A3A] rounded text-[#AAAAAA]">个人版</span>
+<span id="ollama-badge" class="text-[10px] px-2 py-0.5 rounded bg-[#3A3A3A] text-[#AAAAAA]">检测中</span>
+</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="index.html">
+<iconify-icon class="text-xl" icon="heroicons:home-solid"></iconify-icon><span>首页</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="generate.html">
+<iconify-icon class="text-xl" icon="heroicons:document-plus-solid"></iconify-icon><span>生成简历</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="optimize.html">
+<iconify-icon class="text-xl" icon="heroicons:sparkles-solid"></iconify-icon><span>简历优化</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg sidebar-item-active" href="interview.html">
+<iconify-icon class="text-xl" icon="heroicons:chat-bubble-left-right-solid"></iconify-icon><span>模拟面试</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-[#3A3A3A]">
+<div class="text-xs text-[#666666]">桌面版 Demo · 本地运行</div>
+</div>
+</aside>
+
+<aside class="w-[280px] bg-[#1A1A1A] border-r border-[#3A3A3A] flex flex-col flex-none overflow-hidden">
+<div class="p-4 border-b border-[#3A3A3A]">
+<div class="text-lg font-bold text-white">历史记录</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-2" id="history-list">
+</div>
+</aside>
+
+<main class="flex-1 flex flex-col min-w-0 bg-[#121212]">
+<div id="setup-view" class="flex-1 overflow-y-auto custom-scrollbar p-10">
+<div class="max-w-2xl mx-auto">
+<div class="space-y-8 pb-12">
+<section>
+<h2 class="text-2xl font-bold mb-2">AI 模拟面试官</h2>
+<p class="text-[#AAAAAA] text-sm">选择技术方向和面试难度，AI 将为你模拟真实面试场景，帮助你提升面试技巧。</p>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:file-upload"></iconify-icon>上传简历</h3>
+<div class="drop-zone rounded-xl p-8 text-center cursor-pointer" id="resume-drop-zone" onclick="window.pickResume()">
+<input type="file" id="resume-input" accept=".pdf" class="hidden" onchange="window.handleResumeUpload(this)"/>
+<iconify-icon class="text-4xl text-[#666666] mb-4 inline-block" icon="ph:file-pdf"></iconify-icon>
+<p class="text-[#AAAAAA] text-sm mb-2">点击上传简历（PDF）</p>
+<p class="text-[#666666] text-xs">上传简历后，AI 将结合简历内容进行针对性提问</p>
+</div>
+<div id="resume-selected" class="mt-4 hidden">
+<div class="flex items-center justify-between bg-[#252525] rounded-lg p-3">
+<div class="flex items-center space-x-3">
+<iconify-icon class="text-lg text-[#4F8CFF]" icon="ph:check-circle-fill"></iconify-icon>
+<span class="text-sm text-[#AAAAAA]" id="resume-filename">文件名</span>
+</div>
+<button class="text-[#FF4D4F] text-xs hover:text-red-400" onclick="window.clearResume()">移除</button>
+</div>
+</div>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:code-2"></iconify-icon>技术方向</h3>
+<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A]">
+<div class="grid grid-cols-1 gap-3">
+<label class="flex items-center space-x-3 cursor-pointer">
+<input type="radio" name="tech-direction" value="frontend" class="w-4 h-4 text-[#4F8CFF] bg-[#1A1A1A] border-[#3A3A3A] focus:ring-[#4F8CFF]" onclick="window.selectTechDirection(this, 'frontend')"/>
+<iconify-icon class="text-lg text-[#4F8CFF]" icon="ph:layout"></iconify-icon>
+<span class="text-sm">前端开发</span>
+<span class="text-xs text-[#666666] ml-auto">网页、H5、小程序</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input type="radio" name="tech-direction" value="backend" class="w-4 h-4 text-[#4F8CFF] bg-[#1A1A1A] border-[#3A3A3A] focus:ring-[#4F8CFF]" onclick="window.selectTechDirection(this, 'backend')"/>
+<iconify-icon class="text-lg text-[#10B981]" icon="ph:database"></iconify-icon>
+<span class="text-sm">后端开发</span>
+<span class="text-xs text-[#666666] ml-auto">接口、业务逻辑、数据处理</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input type="radio" name="tech-direction" value="client" class="w-4 h-4 text-[#4F8CFF] bg-[#1A1A1A] border-[#3A3A3A] focus:ring-[#4F8CFF]" onclick="window.selectTechDirection(this, 'client')"/>
+<iconify-icon class="text-lg text-[#F59E0B]" icon="ph:smartphone"></iconify-icon>
+<span class="text-sm">客户端开发</span>
+<span class="text-xs text-[#666666] ml-auto">Android/iOS/Flutter</span>
+</label>
+</div>
+</div>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:building-2"></iconify-icon>企业类型</h3>
+<select class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-4 py-3 text-sm focus:border-[#4F8CFF] outline-none text-white" id="company-type">
+<option value="bigtech">互联网大厂</option>
+<option value="multinational">跨国名企</option>
+<option value="soe">国企/事业单位</option>
+<option value="startup">成长型创业公司</option>
+</select>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:trending-up"></iconify-icon>面试难度</h3>
+<div class="flex p-2 bg-[#252525] rounded-lg border border-[#3A3A3A]">
+<button class="flex-1 py-2 text-xs rounded-md text-[#AAAAAA] difficulty-btn" data-difficulty="junior" onclick="window.selectDifficulty(this, 'junior')">初级</button>
+<button class="flex-1 py-2 text-xs rounded-md difficulty-btn active" data-difficulty="intermediate" onclick="window.selectDifficulty(this, 'intermediate')">中级</button>
+<button class="flex-1 py-2 text-xs rounded-md text-[#AAAAAA] difficulty-btn" data-difficulty="senior" onclick="window.selectDifficulty(this, 'senior')">高级</button>
+</div>
+</section>
+</div>
+
+<div class="mt-8">
+<button class="w-full accent-btn py-4 rounded-xl text-lg font-bold flex items-center justify-center space-x-2" onclick="window.startInterview()">
+<iconify-icon icon="ph:play-circle-bold"></iconify-icon>
+<span>开始面试</span>
+</button>
+</div>
+</div>
+</div>
+
+<div id="interview-view" class="h-full flex flex-col min-w-0 hidden">
+<header class="h-16 border-b border-[#3A3A3A] flex items-center justify-between px-8 bg-[#1A1A1A] flex-none shrink-0">
+<div class="flex items-center space-x-3">
+<h2 class="font-bold text-lg" id="interview-title">当前面试</h2>
+<div class="flex space-x-2">
+<span class="text-[10px] px-2 py-0.5 bg-[#4F8CFF]/10 text-[#4F8CFF] rounded" id="interview-difficulty">中级</span>
+<span class="text-[10px] px-2 py-0.5 bg-[#3A3A3A] text-[#AAAAAA] rounded" id="interview-company">互联网大厂</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="flex items-center space-x-1 text-sm text-[#AAAAAA] hover:text-white transition-colors" onclick="window.restartInterview()">
+<iconify-icon icon="ph:clock-counter-clockwise"></iconify-icon>
+<span>重新开始</span>
+</button>
+<button class="px-4 py-1.5 bg-[#FF4D4F]/10 text-[#FF4D4F] border border-[#FF4D4F]/20 rounded-lg text-sm hover:bg-[#FF4D4F]/20 transition-all" onclick="window.endInterview()">结束面试</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6" id="chat-container">
+<div class="flex items-start space-x-4 max-w-4xl" id="typing-indicator" style="display: none;">
+<div class="w-10 h-10 rounded-full bg-[#3A3A3A] flex items-center justify-center text-[#4F8CFF] flex-none">
+<iconify-icon class="text-2xl" icon="ph:robot-fill"></iconify-icon>
+</div>
+<div class="chat-bubble-ai p-5 shadow-lg flex items-center space-x-2">
+<div class="w-1.5 h-1.5 bg-[#AAAAAA] rounded-full animate-bounce"></div>
+<div class="w-1.5 h-1.5 bg-[#AAAAAA] rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+<div class="w-1.5 h-1.5 bg-[#AAAAAA] rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-[#3A3A3A] bg-[#1A1A1A] flex-none shrink-0">
+<div class="max-w-4xl mx-auto relative">
+<textarea class="w-full bg-[#252525] border border-[#3A3A3A] rounded-2xl p-4 pr-24 text-sm text-white focus:border-[#4F8CFF] outline-none resize-none custom-scrollbar" id="chat-input" placeholder="在此输入你的回答..." rows="3"></textarea>
+<div class="absolute right-3 bottom-3">
+<button class="bg-[#4F8CFF] text-white px-5 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 hover:bg-[#4070FF] transition-colors" onclick="window.sendMessage()">
+<span>发送</span>
+<iconify-icon icon="ph:paper-plane-right-fill"></iconify-icon>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-[#444] mt-4 uppercase tracking-widest">AI 面试助手生成的回复可能存在偏差，仅供模拟演练参考</p>
+</div>
+</div>
+</main>
+
+<script src="js/bridge.js"></script>
+<script src="js/interview.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<style>
+  @page { size: A4; margin: 0; }
+  body { font-family: "{{ font_name }}", "Microsoft YaHei", sans-serif; color: #1a1a1a; font-size: 11px; margin: 0; }
+  .sidebar { width: 32%; background: #0f766e; color: #fff; float: left; min-height: 1000px; padding: 28px 18px; box-sizing: border-box; }
+  .main { width: 68%; float: left; padding: 28px 22px; box-sizing: border-box; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  h2 { font-size: 12px; color: #0f766e; border-bottom: 2px solid #99f6e4; padding-bottom: 4px; margin: 16px 0 8px; }
+  .side-h { font-size: 11px; letter-spacing: 1px; margin: 18px 0 8px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px; }
+  .photo { width: 90px; height: 110px; object-fit: cover; border: 3px solid #99f6e4; margin-bottom: 12px; }
+  .meta { font-size: 10px; opacity: 0.95; line-height: 1.6; }
+  .item { margin-bottom: 10px; }
+  .left { font-weight: bold; }
+  .right { float: right; color: #666; font-size: 10px; }
+  .desc { white-space: pre-wrap; color: #333; margin-top: 4px; }
+  .clear { clear: both; }
+</style>
+</head>
+<body>
+  <div class="sidebar">
+    {% if photo_uri %}<img class="photo" src="{{ photo_uri }}" alt="photo"/>{% endif %}
+    <h1>{{ name }}</h1>
+    <div class="meta">{{ phone }}<br/>{{ email }}</div>
+    {% if skills %}
+    <div class="side-h">技能</div>
+    <div class="meta">{{ skills }}</div>
+    {% endif %}
+    {% if education %}
+    <div class="side-h">教育</div>
+    {% for ed in education %}
+    <div class="meta" style="margin-bottom:8px;"><b>{{ ed.school }}</b><br/>{{ ed.degree }} {{ ed.major }}<br/>{{ ed.period }}</div>
+    {% endfor %}
+    {% endif %}
+  </div>
+  <div class="main">
+    {% if summary %}
+    <h2>个人概述</h2>
+    <p>{{ summary }}</p>
+    {% endif %}
+    {% if experiences %}
+    <h2>工作经历</h2>
+    {% for e in experiences %}
+    <div class="item">
+      <span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span>
+      <div class="clear"></div>
+      {% if e.title %}<div style="color:#0f766e;margin:2px 0;">{{ e.title }}</div>{% endif %}
+      <div class="desc">{{ e.description }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if projects %}
+    <h2>项目经历</h2>
+    {% for p in projects %}
+    <div class="item">
+      <span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span>
+      <div class="clear"></div>
+      <div class="desc">{{ p.description }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+</body>
+</html>

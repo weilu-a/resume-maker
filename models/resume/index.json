@@ -1,0 +1,40 @@
+{
+  "templates": [
+    {
+      "id": "purple-teacher",
+      "name": "紫白极简教师风",
+      "tag": "教育",
+      "tag_color": "#8B5CF6",
+      "description": "适合教师与教育培训岗位的清爽紫白排版",
+      "file": "purple-teacher.pdf",
+      "preview": "previews/purple-teacher.png"
+    },
+    {
+      "id": "blue-business",
+      "name": "蓝白商务风",
+      "tag": "商务",
+      "tag_color": "#2563EB",
+      "description": "适合商务与综合岗位的蓝白专业排版",
+      "file": "blue-business.pdf",
+      "preview": "previews/blue-business.png"
+    },
+    {
+      "id": "blue-minimal",
+      "name": "蓝白简约大气",
+      "tag": "通用",
+      "tag_color": "#3B82F6",
+      "description": "简约大气，适合互联网与通用求职",
+      "file": "blue-minimal.pdf",
+      "preview": "previews/blue-minimal.png"
+    },
+    {
+      "id": "blue-bold",
+      "name": "蓝色大气",
+      "tag": "传媒",
+      "tag_color": "#1D4ED8",
+      "description": "视觉冲击强，适合传媒创意与展示型岗位",
+      "file": "blue-bold.pdf",
+      "preview": "previews/blue-bold.png"
+    }
+  ]
+}

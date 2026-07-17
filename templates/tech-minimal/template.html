@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<style>
+  @page { size: A4; margin: 1.2cm; }
+  body { font-family: "{{ font_name }}", "Microsoft YaHei", sans-serif; color: #111; font-size: 11px; line-height: 1.45; }
+  h1 { font-size: 22px; margin: 0 0 4px 0; }
+  h2 { font-size: 12px; border-bottom: 1px solid #333; padding-bottom: 3px; margin: 14px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .meta { color: #555; font-size: 10px; }
+  .header { border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 8px; }
+  .photo { width: 70px; height: 90px; float: right; object-fit: cover; border: 1px solid #ddd; }
+  .item { margin-bottom: 8px; }
+  .row { overflow: hidden; }
+  .left { float: left; font-weight: bold; }
+  .right { float: right; color: #666; font-size: 10px; }
+  .title { font-style: italic; color: #444; margin: 2px 0 4px; }
+  .desc { white-space: pre-wrap; color: #333; }
+  .clear { clear: both; }
+</style>
+</head>
+<body>
+  <div class="header">
+    {% if photo_uri %}
+    <img class="photo" src="{{ photo_uri }}" alt="photo"/>
+    {% endif %}
+    <h1>{{ name }}</h1>
+    <div class="meta">{{ phone }}{% if phone and email %} | {% endif %}{{ email }}</div>
+    {% if summary %}<p style="margin-top:8px;">{{ summary }}</p>{% endif %}
+    <div class="clear"></div>
+  </div>
+
+  {% if experiences %}
+  <h2>工作经历</h2>
+  {% for e in experiences %}
+  <div class="item">
+    <div class="row"><span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span></div>
+    <div class="clear"></div>
+    {% if e.title %}<div class="title">{{ e.title }}</div>{% endif %}
+    <div class="desc">{{ e.description }}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if projects %}
+  <h2>项目经历</h2>
+  {% for p in projects %}
+  <div class="item">
+    <div class="row"><span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span></div>
+    <div class="clear"></div>
+    <div class="desc">{{ p.description }}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if education %}
+  <h2>教育背景</h2>
+  {% for ed in education %}
+  <div class="item">
+    <div class="row"><span class="left">{{ ed.school }}</span><span class="right">{{ ed.period }}</span></div>
+    <div class="clear"></div>
+    <div class="meta">{{ ed.degree }}{% if ed.major %} · {{ ed.major }}{% endif %}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if skills %}
+  <h2>专业技能</h2>
+  <div class="desc">{{ skills }}</div>
+  {% endif %}
+
+  <p style="text-align:center;color:#aaa;font-size:8px;margin-top:24px;">Powered by Resume Studio AI</p>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>简历工坊 - 生成简历</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<link rel="stylesheet" href="css/app.css"/>
+</head>
+<body class="h-screen flex overflow-hidden">
+<aside class="w-[220px] bg-[#1E1E1E] flex flex-col border-r border-[#3A3A3A] flex-none">
+<div class="p-6">
+<div class="flex items-center space-x-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A]">
+<iconify-icon class="text-xl" icon="ph:user-bold"></iconify-icon>
+</div>
+<div>
+<div class="text-sm font-medium">简历探险者</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="index.html">
+<iconify-icon class="text-xl" icon="heroicons:home-solid"></iconify-icon><span>首页</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg sidebar-item-active" href="generate.html">
+<iconify-icon class="text-xl" icon="heroicons:document-plus-solid"></iconify-icon><span>生成简历</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="optimize.html">
+<iconify-icon class="text-xl" icon="heroicons:sparkles-solid"></iconify-icon><span>简历优化</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="interview.html">
+<iconify-icon class="text-xl" icon="heroicons:chat-bubble-left-right-solid"></iconify-icon><span>模拟面试</span>
+</a>
+</nav>
+</div>
+</aside>
+
+<main class="flex-1 flex flex-col min-w-0">
+<header class="h-16 border-b border-[#3A3A3A] flex items-center px-8 bg-[#1A1A1A] z-10">
+<div class="flex-1 flex items-center space-x-12">
+<a class="flex items-center space-x-2 text-[#AAAAAA] hover:text-white transition-colors" href="index.html">
+<iconify-icon icon="ph:caret-left-bold"></iconify-icon><span>返回</span>
+</a>
+<div class="flex items-center space-x-4 flex-1 max-w-2xl">
+<div class="flex items-center space-x-2 step-active" id="step-1-head">
+<div class="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs font-bold">1</div>
+<span class="text-sm">选择模板</span>
+</div>
+<div class="flex-1 h-[1px] bg-[#3A3A3A]" id="line-1"></div>
+<div class="flex items-center space-x-2 text-[#AAAAAA]" id="step-2-head">
+<div class="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs font-bold">2</div>
+<span class="text-sm">填写信息</span>
+</div>
+<div class="flex-1 h-[1px] bg-[#3A3A3A]" id="line-2"></div>
+<div class="flex items-center space-x-2 text-[#AAAAAA]" id="step-3-head">
+<div class="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs font-bold">3</div>
+<span class="text-sm">生成导出</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="hidden px-6 py-2 rounded-lg bg-[#2D2D2D] border border-[#3A3A3A] text-sm" id="prev-btn" onclick="prevStep()">上一步</button>
+<button class="px-6 py-2 rounded-lg bg-[#4F8CFF] hover:bg-[#4070FF] transition-colors text-sm font-medium" id="next-btn" onclick="nextStep()">下一步</button>
+</div>
+</header>
+
+<div class="flex-1 overflow-hidden relative">
+<!-- Step 1 -->
+<div class="h-full overflow-y-auto custom-scrollbar p-8" id="step-1">
+<div class="mb-8">
+<h2 class="text-2xl font-bold mb-2">选择一个模板开始</h2>
+<p class="text-[#AAAAAA]">以下模板来自 <code class="text-[#4F8CFF]">models/resume</code>，选择后右侧预览与导出将套用对应版式。</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="template-grid"></div>
+</div>
+
+<!-- Step 2 -->
+<div class="hidden h-full flex" id="step-2">
+<div class="w-1/2 overflow-y-auto custom-scrollbar p-8 border-r border-[#3A3A3A]">
+<div class="space-y-8 pb-12">
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:user-list"></iconify-icon>基本信息</h3>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs text-[#AAAAAA] mb-1.5">姓名</label>
+<input id="field-name" class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-4 py-2 text-sm focus:border-[#4F8CFF] outline-none" type="text" value="张大强"/>
+</div>
+<div>
+<label class="block text-xs text-[#AAAAAA] mb-1.5">联系电话</label>
+<input id="field-phone" class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-4 py-2 text-sm focus:border-[#4F8CFF] outline-none" placeholder="138 **** 8888" type="text" value="138-0000-0000"/>
+</div>
+<div class="col-span-2">
+<label class="block text-xs text-[#AAAAAA] mb-1.5">电子邮箱</label>
+<input id="field-email" class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-4 py-2 text-sm focus:border-[#4F8CFF] outline-none" type="email" value="example@email.com"/>
+</div>
+<div class="col-span-2">
+<label class="block text-xs text-[#AAAAAA] mb-1.5">个人概述</label>
+<textarea id="field-summary" class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-4 py-2 text-sm h-20 focus:border-[#4F8CFF] outline-none" placeholder="一句话介绍自己">性格开朗，工作负责，学习能力强，能吃苦耐劳。</textarea>
+</div>
+<div class="col-span-2">
+<label class="block text-xs text-[#AAAAAA] mb-1.5">专业技能</label>
+<input id="field-skills" class="w-full bg-[#252525] border border-[#3A3A3A] rounded-lg px-4 py-2 text-sm focus:border-[#4F8CFF] outline-none" value="Python / TypeScript / 前端工程化 / 团队协作"/>
+</div>
+<div class="col-span-2">
+<label class="block text-xs text-[#AAAAAA] mb-1.5">证件照</label>
+<button id="btn-pick-photo" type="button" class="w-full py-3 border-2 border-dashed border-[#3A3A3A] rounded-xl text-sm text-[#AAAAAA] hover:border-[#4F8CFF] hover:text-[#4F8CFF] transition-all">
+选择照片
+</button>
+<p id="photo-hint" class="text-[11px] text-[#666666] mt-2">可选，支持 jpg/png</p>
+</div>
+</div>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:briefcase"></iconify-icon>工作经历</h3>
+<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3">
+<input id="exp-company" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="公司名称" value="某某科技有限公司"/>
+<div class="grid grid-cols-2 gap-3">
+<input id="exp-title" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="职位" value="高级前端开发工程师"/>
+<input id="exp-period" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="时间" value="2021.06 - 至今"/>
+</div>
+<textarea id="exp-desc" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-xs h-24 outline-none" placeholder="工作描述">负责公司网站的开发和维护。使用了 Vue 框架，修复了很多 Bug。参与了几个新功能的上线。</textarea>
+</div>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:graduation-cap"></iconify-icon>教育背景</h3>
+<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3">
+<input id="edu-school" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="某名牌大学"/>
+<div class="grid grid-cols-3 gap-3">
+<input id="edu-degree" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="本科"/>
+<input id="edu-major" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="计算机科学与技术"/>
+<input id="edu-period" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="2017.09 - 2021.06"/>
+</div>
+</div>
+</section>
+
+<section>
+<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:code"></iconify-icon>项目经历</h3>
+<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3">
+<div class="grid grid-cols-2 gap-3">
+<input id="proj-name" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="Resume Studio 简历工坊"/>
+<input id="proj-period" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="2024.01 - 2024.06"/>
+</div>
+<textarea id="proj-desc" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-xs h-20 outline-none">基于 AI 的简历辅助生成系统，帮助求职者快速打造专业简历。</textarea>
+</div>
+</section>
+</div>
+</div>
+
+<div class="flex-1 bg-[#121212] flex flex-col items-center justify-center p-6 min-w-0">
+<div class="w-full max-w-[420px] flex flex-col items-center gap-3 h-full">
+<div class="text-[11px] text-[#666666] self-start uppercase tracking-wider">实时预览 · 当前模板</div>
+<div id="preview-template-name" class="text-sm text-[#4F8CFF] self-start mb-1"></div>
+<div class="resume-preview-frame flex-1 w-full bg-[#2a2a2a] rounded-lg shadow-2xl overflow-hidden border border-[#3A3A3A]">
+<iframe id="live-preview-frame" title="简历预览" class="w-full h-full border-0 bg-white"></iframe>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Step 3 -->
+<div class="hidden h-full flex flex-col items-center justify-center p-8 bg-[#121212]" id="step-3">
+<div class="flex flex-col items-center" id="generating-state">
+<div class="relative w-24 h-24 mb-6">
+<div class="absolute inset-0 rounded-full border-4 border-[#4F8CFF]/20"></div>
+<div class="absolute inset-0 rounded-full border-4 border-t-[#4F8CFF] animate-spin"></div>
+<iconify-icon class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#4F8CFF] text-3xl" icon="ph:sparkle-fill"></iconify-icon>
+</div>
+<h2 class="text-xl font-bold mb-2">正在为你生成专业简历...</h2>
+<p id="gen-status" class="text-[#666666]">AI 正在优化排版和文字描述，请稍候</p>
+</div>
+
+<div class="hidden flex flex-col items-center max-w-4xl w-full" id="success-state">
+<div class="w-16 h-16 bg-[#10B981] rounded-full flex items-center justify-center text-white text-3xl mb-6 shadow-lg shadow-[#10B981]/20">
+<iconify-icon icon="ph:check-bold"></iconify-icon>
+</div>
+<h2 class="text-2xl font-bold mb-2">简历已生成成功！</h2>
+<p class="text-sm text-[#AAAAAA] mb-2">保存路径：</p>
+<p id="export-path" class="text-xs text-[#4F8CFF] mb-2 break-all px-8 text-center"></p>
+<span id="ai-source-tag" class="text-[11px] px-2 py-0.5 rounded bg-[#3A3A3A] text-[#AAAAAA] mb-8">AI</span>
+<div class="flex space-x-8 w-full">
+<div class="flex-1 bg-[#252525] rounded-2xl p-6 border border-[#3A3A3A] flex flex-col items-center">
+<div class="w-full max-w-[220px] aspect-[210/297] bg-white rounded shadow-lg mb-6 overflow-hidden">
+<img id="result-pdf-preview" class="w-full h-full object-contain" alt="生成预览" src=""/>
+</div>
+<div class="flex flex-col w-full space-y-3">
+<button id="btn-export-pdf" class="accent-btn py-2.5 rounded-lg flex items-center justify-center space-x-2 font-medium">
+<iconify-icon icon="ph:file-pdf"></iconify-icon><span>确认导出完成</span>
+</button>
+<button id="btn-open-folder" class="bg-[#3A3A3A] hover:bg-[#4A4A4A] py-2.5 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+<iconify-icon icon="ph:folder-open"></iconify-icon><span>打开输出目录</span>
+</button>
+</div>
+</div>
+<div class="w-80 glass-card rounded-2xl p-6 flex flex-col justify-center border-l-4 border-l-[#4F8CFF]">
+<iconify-icon class="text-4xl text-[#4F8CFF] mb-4" icon="ph:magic-wand-fill"></iconify-icon>
+<h3 class="text-lg font-bold mb-3">想要更上一层楼？</h3>
+<p class="text-sm text-[#AAAAAA] mb-6">我们的 AI 可以对简历内容做更深度的文案美化与竞争力分析。</p>
+<a class="py-2.5 bg-[#4F8CFF]/10 text-[#4F8CFF] border border-[#4F8CFF]/20 rounded-lg text-center font-medium hover:bg-[#4F8CFF]/20 transition-all" href="optimize.html">前往简历优化</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" id="success-modal">
+<div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+<div class="relative w-full max-w-sm glass-card rounded-2xl p-8 text-center border border-white/10 shadow-2xl">
+<div class="w-16 h-16 bg-[#10B981]/10 text-[#10B981] rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+<iconify-icon icon="ph:check-circle"></iconify-icon>
+</div>
+<h3 class="text-xl font-bold mb-2">导出成功！</h3>
+<p class="text-[#AAAAAA] text-sm mb-8">PDF 已保存到本地 output 目录。是否继续使用 AI 简历优化？</p>
+<div class="flex flex-col space-y-3">
+<a class="accent-btn py-3 rounded-xl font-medium" href="optimize.html">前往优化</a>
+<button class="py-3 text-[#666666] hover:text-[#AAAAAA] transition-colors" onclick="closeModal()">暂不需要</button>
+</div>
+</div>
+</div>
+
+<script src="js/bridge.js"></script>
+<script src="js/generate.js"></script>
+</body>
+</html>

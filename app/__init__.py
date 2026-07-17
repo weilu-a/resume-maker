@@ -1,0 +1,1 @@
+# Resume Studio desktop app package

@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<style>
+  @page { size: A4; margin: 1.2cm 1.3cm 1.8cm; }
+  * { box-sizing: border-box; }
+  html, body { min-height: 297mm; }
+  body { font-family: "{{ font_name }}", "Microsoft YaHei", sans-serif; color: #1e293b; font-size: 10.5px; line-height: 1.7; padding-bottom: 28px; }
+  .header { overflow: hidden; margin-bottom: 16px; }
+  .header-left { float: left; width: 70%; }
+  .header-left h1 { margin: 0; font-size: 26px; color: #1d4ed8; }
+  .header-left .en { color: #64748b; letter-spacing: 3px; font-size: 12px; margin-top: 2px; }
+  .photo { width: 78px; height: 98px; float: right; object-fit: cover; border: 2px solid #1d4ed8; }
+  .info { clear: both; margin: 14px 0 20px; line-height: 2; overflow: hidden; }
+  .info-col { float: left; width: 50%; word-wrap: break-word; }
+  .sec-h { color: #1d4ed8; font-size: 13px; font-weight: bold; border-bottom: 1.5px solid #93c5fd; padding-bottom: 5px; margin: 22px 0 12px; }
+  .item { margin-bottom: 16px; }
+  .row { overflow: hidden; }
+  .left { float: left; font-weight: bold; max-width: 65%; word-wrap: break-word; }
+  .right { float: right; color: #64748b; font-size: 10px; max-width: 32%; }
+  .title { color: #475569; margin: 2px 0 4px; }
+  .desc { color: #334155; word-wrap: break-word; word-break: break-all; white-space: normal; }
+  .clear { clear: both; }
+  .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1d4ed8; color: #fff; text-align: center; font-size: 10px; letter-spacing: 4px; padding: 6px 0; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <h1>个人简历</h1>
+    <div class="en">RESUME</div>
+  </div>
+  {% if photo_uri %}<img class="photo" src="{{ photo_uri }}" alt="photo"/>{% endif %}
+  <div class="clear"></div>
+</div>
+
+<div class="info">
+  <div class="info-col">
+    <div>姓名：{{ name or "—" }}</div>
+    {% if phone %}<div>电话：{{ phone }}</div>{% endif %}
+    {% if intent %}<div>意向：{{ intent|soft_break(16) }}</div>{% endif %}
+  </div>
+  <div class="info-col">
+    {% if email %}<div>邮箱：{{ email|soft_break(18) }}</div>{% endif %}
+    {% if education and education[0].school %}<div>院校：{{ education[0].school|soft_break(16) }}</div>{% endif %}
+  </div>
+  <div class="clear"></div>
+</div>
+
+{% if education %}
+<div class="sec-h">教育背景</div>
+{% for ed in education %}
+<div class="item">
+  <div class="row"><span class="left">{{ ed.school }}</span><span class="right">{{ ed.period }}</span></div>
+  <div class="clear"></div>
+  <div class="title">{{ ed.degree }}{% if ed.major %} · {{ ed.major }}{% endif %}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if experiences %}
+<div class="sec-h">工作经验</div>
+{% for e in experiences %}
+<div class="item">
+  <div class="row"><span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span></div>
+  <div class="clear"></div>
+  {% if e.title %}<div class="title">{{ e.title }}</div>{% endif %}
+  <div class="desc">{{ e.description|fmt(18) }}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if projects %}
+<div class="sec-h">校园 / 项目经历</div>
+{% for p in projects %}
+<div class="item">
+  <div class="row"><span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span></div>
+  <div class="clear"></div>
+  <div class="desc">{{ p.description|fmt(22) }}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if skills %}
+<div class="sec-h">掌握技能</div>
+<div class="desc">{{ skills|fmt(12) }}</div>
+{% endif %}
+
+{% if summary %}
+<div class="sec-h">个人评价</div>
+<div class="desc">{{ summary|fmt(12) }}</div>
+{% endif %}
+
+<div class="footer">RESUME</div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { font-family: "{{ font_name }}", "Microsoft YaHei", sans-serif; color: #1f2937; font-size: 10.5px; margin: 0; line-height: 1.65; }
+  table.layout { width: 100%; height: 297mm; min-height: 297mm; border-collapse: collapse; table-layout: fixed; }
+  td.side { width: 32%; max-width: 32%; height: 297mm; background: #1e3a5f; color: #fff; vertical-align: top; padding: 26px 14px 40px; }
+  td.main { width: 68%; max-width: 68%; height: 297mm; vertical-align: top; padding: 26px 20px 40px; }
+  .side-title { font-size: 11px; letter-spacing: 1px; margin: 0 0 16px; opacity: 0.9; }
+  h1 { font-size: 18px; margin: 10px 0 18px; color: #fff; word-wrap: break-word; }
+  .photo { width: 80px; height: 96px; object-fit: cover; border: 2px solid #93c5fd; display: block; margin-bottom: 12px; }
+  .pill { background: #93c5fd; color: #0f172a; font-size: 10px; font-weight: bold; padding: 4px 8px; margin: 18px 0 10px; }
+  .side-meta { display: block; width: 100%; max-width: 100%; font-size: 9.5px; line-height: 1.85; color: #e2e8f0; word-wrap: break-word; word-break: break-all; white-space: normal; }
+  .side-meta div { display: block; width: 100%; max-width: 100%; word-wrap: break-word; word-break: break-all; }
+  .banner { background: #93c5fd; color: #0f172a; text-align: center; font-weight: bold; font-size: 12px; padding: 7px 8px; margin: 22px 0 14px; }
+  .banner:first-child { margin-top: 0; }
+  .item { margin-bottom: 16px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 14px; }
+  .row { overflow: hidden; }
+  .left { float: left; font-weight: bold; max-width: 65%; word-wrap: break-word; }
+  .right { float: right; color: #64748b; font-size: 10px; max-width: 32%; text-align: right; }
+  .title { color: #475569; margin: 2px 0 4px; word-wrap: break-word; }
+  .desc { color: #334155; word-wrap: break-word; word-break: break-all; white-space: normal; }
+  .clear { clear: both; }
+</style>
+</head>
+<body>
+<table class="layout" cellpadding="0" cellspacing="0">
+<tr>
+<td class="side">
+  <div class="side-title">PERSONAL RESUME</div>
+  {% if photo_uri %}<img class="photo" src="{{ photo_uri }}" alt="photo"/>{% endif %}
+  <h1>{{ name or "姓名" }}</h1>
+  <div class="pill">基本信息</div>
+  <div class="side-meta">
+    {% if phone %}<div>电话：{{ phone|soft_break(12) }}</div>{% endif %}
+    {% if email %}<div>邮箱：{{ email|soft_break(12) }}</div>{% endif %}
+    {% if intent %}<div>意向：{{ intent|soft_break(12) }}</div>{% endif %}
+  </div>
+  {% if skills %}
+  <div class="pill">专业技能</div>
+  <div class="side-meta">{{ skills|fmt(10) }}</div>
+  {% endif %}
+  {% if summary %}
+  <div class="pill">自我评价</div>
+  <div class="side-meta">{{ summary|fmt(10) }}</div>
+  {% endif %}
+</td>
+<td class="main">
+  {% if education %}
+  <div class="banner">教育背景</div>
+  {% for ed in education %}
+  <div class="item">
+    <div class="row"><span class="left">{{ ed.school }}</span><span class="right">{{ ed.period }}</span></div>
+    <div class="clear"></div>
+    <div class="title">{{ ed.degree }}{% if ed.major %} · {{ ed.major }}{% endif %}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% if projects %}
+  <div class="banner">项目经历</div>
+  {% for p in projects %}
+  <div class="item">
+    <div class="row"><span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span></div>
+    <div class="clear"></div>
+    <div class="desc">{{ p.description|fmt(18) }}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% if experiences %}
+  <div class="banner">实习 / 工作经历</div>
+  {% for e in experiences %}
+  <div class="item">
+    <div class="row"><span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span></div>
+    <div class="clear"></div>
+    {% if e.title %}<div class="title">{{ e.title }}</div>{% endif %}
+    <div class="desc">{{ e.description|fmt(18) }}</div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</td>
+</tr>
+</table>
+</body>
+</html>

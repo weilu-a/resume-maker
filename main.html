@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>简历工坊 - 首页</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<style>
+        body { background-color: #1A1A1A; color: #FFFFFF; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .sidebar-item-active { background-color: #2D2D2D; border-left: 4px solid #4F8CFF; color: #4F8CFF; }
+        .glass-card { background: rgba(45, 45, 45, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .accent-btn { background: linear-gradient(135deg, #4F8CFF, #3066FF); transition: all 0.3s ease; }
+        .accent-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79, 140, 255, 0.3); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3A3A3A; border-radius: 3px; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+<!-- 左侧侧边栏 -->
+<aside class="w-[220px] bg-[#1E1E1E] flex flex-col border-r border-[#3A3A3A] flex-none">
+<!-- 用户信息区 -->
+<div class="p-6">
+<div class="flex items-center space-x-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center border-2 border-[#3A3A3A]">
+<iconify-icon class="text-xl" icon="ph:user-bold"></iconify-icon>
+</div>
+<div>
+<div class="text-sm font-medium">简历探险者</div>
+<div class="flex items-center space-x-1">
+<span class="text-[10px] px-1.5 py-0.5 bg-[#3A3A3A] rounded text-[#AAAAAA]">个人版</span>
+<span class="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-amber-400 to-yellow-600 rounded text-black font-bold">VIP</span>
+</div>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg sidebar-item-active" href="main.html">
+<iconify-icon class="text-xl" icon="heroicons:home-solid"></iconify-icon>
+<span>首页</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="generate.html">
+<iconify-icon class="text-xl" icon="heroicons:document-plus-solid"></iconify-icon>
+<span>生成简历</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="optimize.html">
+<iconify-icon class="text-xl" icon="heroicons:sparkles-solid"></iconify-icon>
+<span>简历优化</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="interview.html">
+<iconify-icon class="text-xl" icon="heroicons:chat-bubble-left-right-solid"></iconify-icon>
+<span>模拟面试</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:square-3-stack-3d-solid"></iconify-icon>
+<span>模板库</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#AAAAAA] hover:bg-[#2D2D2D] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:clock-solid"></iconify-icon>
+<span>历史记录</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-[#3A3A3A]">
+<a class="flex items-center space-x-3 px-4 py-2 rounded-lg text-[#666666] hover:text-[#AAAAAA] transition-colors" href="#">
+<iconify-icon class="text-xl" icon="heroicons:cog-6-tooth-solid"></iconify-icon>
+<span>设置</span>
+</a>
+</div>
+</aside>
+<!-- 主内容区 -->
+<main class="flex-1 flex flex-col min-w-0">
+<!-- 顶部导航栏 -->
+<header class="h-16 border-b border-[#3A3A3A] flex items-center justify-between px-8 bg-[#1A1A1A] z-10">
+<div class="flex items-center space-x-8">
+<h1 class="text-lg font-bold tracking-tight text-[#4F8CFF]">简历工坊 <span class="text-white font-normal ml-1">Resume Studio</span></h1>
+<nav class="hidden md:flex items-center space-x-6">
+<a class="text-[#AAAAAA] hover:text-white transition-colors text-sm" href="generate.html">生成简历</a>
+<a class="text-[#AAAAAA] hover:text-white transition-colors text-sm" href="optimize.html">简历优化</a>
+<a class="text-[#AAAAAA] hover:text-white transition-colors text-sm" href="interview.html">模拟面试</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<button class="px-4 py-1.5 rounded-full bg-[#2D2D2D] text-sm text-[#AAAAAA] hover:text-white transition-colors border border-[#3A3A3A]">
+                    我的简历
+                </button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-[#3A3A3A]">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://modao.cc/agent-py/media/generated_images/2026-06-26/3897ae65e7734794adc3fbb56826b171.jpg"/>
+</div>
+</div>
+</header>
+<!-- 滚动内容区 -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<!-- 欢迎语 -->
+<div class="mb-10">
+<h2 class="text-3xl font-bold mb-2">下午好，探险者</h2>
+<p class="text-[#AAAAAA]">今天想要打造一份怎样的简历？AI 已经准备好为你助力了。</p>
+</div>
+<!-- 核心功能卡片 -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- 生成简历 -->
+<div class="glass-card rounded-2xl p-8 group cursor-pointer hover:border-[#4F8CFF]/30 transition-all">
+<div class="w-14 h-14 rounded-xl bg-[#4F8CFF]/10 flex items-center justify-center text-[#4F8CFF] mb-6 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-4xl" icon="ph:file-plus-duotone"></iconify-icon>
+</div>
+<h3 class="text-xl font-bold mb-3">AI 智能生成简历</h3>
+<p class="text-[#AAAAAA] text-sm leading-relaxed mb-6">
+                        选择专业模板 → 填写基础信息 → 一键生成高转化简历，支持 PDF 多格式导出。
+                    </p>
+<a class="accent-btn w-full py-2.5 rounded-lg text-center font-medium block text-sm" href="generate.html">立即使用</a>
+</div>
+<!-- 简历优化 -->
+<div class="glass-card rounded-2xl p-8 group cursor-pointer hover:border-[#10B981]/30 transition-all">
+<div class="w-14 h-14 rounded-xl bg-[#10B981]/10 flex items-center justify-center text-[#10B981] mb-6 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-4xl" icon="ph:magic-wand-duotone"></iconify-icon>
+</div>
+<h3 class="text-xl font-bold mb-3">简历智能优化</h3>
+<p class="text-[#AAAAAA] text-sm leading-relaxed mb-6">
+                        上传已有简历，AI 自动优化文字描述与专业排版，针对性提升求职通过率。
+                    </p>
+<a class="w-full py-2.5 rounded-lg bg-[#2D2D2D] hover:bg-[#3A3A3A] text-center font-medium block text-sm border border-[#3A3A3A] transition-colors" href="optimize.html">立即优化</a>
+</div>
+<!-- 模拟面试 -->
+<div class="glass-card rounded-2xl p-8 group cursor-pointer hover:border-[#8B5CF6]/30 transition-all">
+<div class="w-14 h-14 rounded-xl bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] mb-6 group-hover:scale-110 transition-transform">
+<iconify-icon class="text-4xl" icon="ph:headset-duotone"></iconify-icon>
+</div>
+<h3 class="text-xl font-bold mb-3">AI 模拟面试官</h3>
+<p class="text-[#AAAAAA] text-sm leading-relaxed mb-6">
+                        根据你的简历与目标岗位，AI 智能体模拟真实面试场景，助你提前进入实战状态。
+                    </p>
+<a class="w-full py-2.5 rounded-lg bg-[#2D2D2D] hover:bg-[#3A3A3A] text-center font-medium block text-sm border border-[#3A3A3A] transition-colors" href="interview.html">开始面试</a>
+</div>
+</div>
+<!-- 最近记录 -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xl font-bold">最近记录</h3>
+<div class="flex space-x-1 p-1 bg-[#252525] rounded-lg">
+<button class="px-4 py-1.5 text-xs rounded-md bg-[#3A3A3A] text-white">生成的简历</button>
+<button class="px-4 py-1.5 text-xs rounded-md text-[#AAAAAA] hover:bg-[#3A3A3A]">优化的版本</button>
+<button class="px-4 py-1.5 text-xs rounded-md text-[#AAAAAA] hover:bg-[#3A3A3A]">面试回放</button>
+</div>
+</div>
+<div class="space-y-3">
+<!-- 记录项 -->
+<div class="glass-card p-4 rounded-xl flex items-center hover:bg-[#2D2D2D] transition-colors cursor-pointer group">
+<div class="w-10 h-12 bg-[#3A3A3A] rounded flex items-center justify-center text-[#AAAAAA] mr-4">
+<iconify-icon class="text-2xl" icon="ph:file-pdf"></iconify-icon>
+</div>
+<div class="flex-1">
+<h4 class="font-medium mb-0.5">字节跳动-前端开发工程师-张大强</h4>
+<div class="flex items-center space-x-3 text-xs text-[#666666]">
+<span>2024-07-13 14:20</span>
+<span>•</span>
+<span class="text-[#4F8CFF]">已导出 PDF</span>
+</div>
+</div>
+<div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#AAAAAA]"><iconify-icon icon="ph:download-simple"></iconify-icon></button>
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#AAAAAA]"><iconify-icon icon="ph:pencil-simple"></iconify-icon></button>
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#FF4D4F]"><iconify-icon icon="ph:trash"></iconify-icon></button>
+</div>
+</div>
+<div class="glass-card p-4 rounded-xl flex items-center hover:bg-[#2D2D2D] transition-colors cursor-pointer group">
+<div class="w-10 h-12 bg-[#3A3A3A] rounded flex items-center justify-center text-[#AAAAAA] mr-4">
+<iconify-icon class="text-2xl" icon="ph:file-pdf"></iconify-icon>
+</div>
+<div class="flex-1">
+<h4 class="font-medium mb-0.5">腾讯-产品经理实习生-张大强</h4>
+<div class="flex items-center space-x-3 text-xs text-[#666666]">
+<span>2024-07-12 09:15</span>
+<span>•</span>
+<span class="text-amber-500">草稿箱</span>
+</div>
+</div>
+<div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#AAAAAA]"><iconify-icon icon="ph:pencil-simple"></iconify-icon></button>
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#FF4D4F]"><iconify-icon icon="ph:trash"></iconify-icon></button>
+</div>
+</div>
+<div class="glass-card p-4 rounded-xl flex items-center hover:bg-[#2D2D2D] transition-colors cursor-pointer group border-l-4 border-l-[#4F8CFF]">
+<div class="w-10 h-12 bg-[#3A3A3A] rounded flex items-center justify-center text-[#AAAAAA] mr-4">
+<iconify-icon class="text-2xl" icon="ph:file-text"></iconify-icon>
+</div>
+<div class="flex-1">
+<h4 class="font-medium mb-0.5">通用技术类简历-2024秋招版</h4>
+<div class="flex items-center space-x-3 text-xs text-[#666666]">
+<span>2024-07-10 18:30</span>
+<span>•</span>
+<span class="text-[#4F8CFF]">最近编辑</span>
+</div>
+</div>
+<div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#AAAAAA]"><iconify-icon icon="ph:pencil-simple"></iconify-icon></button>
+<button class="p-2 hover:bg-[#3A3A3A] rounded-lg text-[#FF4D4F]"><iconify-icon icon="ph:trash"></iconify-icon></button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body>
+</html>
