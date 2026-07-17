@@ -148,7 +148,7 @@
         return;
       }
       setOptimizedHtml(res.html || "");
-      ResumeBridge.showToast("已切换模板", "ok");
+      ResumeBridge.showToast("已切换预览（导出时才生成 PDF）", "ok");
     } catch (e) {
       ResumeBridge.showToast(e.message || String(e), "warn");
     } finally {

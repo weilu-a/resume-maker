@@ -52,7 +52,7 @@
 <div class="sec"><div class="sec-zh">教育背景</div><div class="sec-en">Educational background</div><div class="clear"></div></div>
 {% for ed in education %}
 <div class="item">
-  <div class="row"><span class="left">{{ ed.period }}</span><span class="right">{{ ed.school }} · {{ ed.major or ed.degree }}</span></div>
+  <div class="row"><span class="left">{{ ed.period }}</span><span class="right">{{ ed.school|soft_break(14) }} · {{ (ed.major or ed.degree)|soft_break(12) }}</span></div>
   <div class="clear"></div>
 </div>
 {% endfor %}
@@ -62,9 +62,9 @@
 <div class="sec"><div class="sec-zh">工作经历</div><div class="sec-en">Work experience</div><div class="clear"></div></div>
 {% for e in experiences %}
 <div class="item">
-  <div class="row"><span class="left">{{ e.company }}{% if e.title %} · {{ e.title }}{% endif %}</span><span class="right">{{ e.period }}</span></div>
+  <div class="row"><span class="left">{{ e.company|soft_break(14) }}{% if e.title %} · {{ e.title|soft_break(12) }}{% endif %}</span><span class="right">{{ e.period }}</span></div>
   <div class="clear"></div>
-  <div class="desc">{{ e.description|fmt(18) }}</div>
+  <div class="desc">{{ e.description|fmt(16) }}</div>
 </div>
 {% endfor %}
 {% endif %}
@@ -73,21 +73,21 @@
 <div class="sec"><div class="sec-zh">项目经历</div><div class="sec-en">Project experience</div><div class="clear"></div></div>
 {% for p in projects %}
 <div class="item">
-  <div class="row"><span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span></div>
+  <div class="row"><span class="left">{{ p.name|soft_break(16) }}</span><span class="right">{{ p.period }}</span></div>
   <div class="clear"></div>
-  <div class="desc">{{ p.description|fmt(22) }}</div>
+  <div class="desc">{{ p.description|fmt(16) }}</div>
 </div>
 {% endfor %}
 {% endif %}
 
 {% if skills %}
 <div class="sec"><div class="sec-zh">专业技能</div><div class="sec-en">Skills</div><div class="clear"></div></div>
-<div class="desc">{{ skills|fmt(12) }}</div>
+<div class="desc">{{ skills|fmt(14) }}</div>
 {% endif %}
 
 {% if summary %}
 <div class="sec"><div class="sec-zh">自我评价</div><div class="sec-en">Self-evaluation</div><div class="clear"></div></div>
-<div class="desc">{{ summary|fmt(12) }}</div>
+<div class="desc">{{ summary|fmt(14) }}</div>
 {% endif %}
 </body>
 </html>

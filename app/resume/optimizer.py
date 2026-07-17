@@ -41,6 +41,54 @@ _SKIP_TITLES = {
     "简历",
     "curriculum vitae",
     "cv",
+    # 模板里的英文副标题（PDF 抽取后会混进正文）
+    "personal information",
+    "educational background",
+    "education background",
+    "work experience",
+    "project experience",
+    "project experiences",
+    "self-evaluation",
+    "self evaluation",
+    "skills",
+    "skill",
+    "professional skills",
+}
+
+_EN_SECTION_MAP: dict[str, tuple[str, str]] = {
+    "personal information": ("basic", "基本信息"),
+    "educational background": ("education", "教育背景"),
+    "education background": ("education", "教育背景"),
+    "work experience": ("experience", "工作经历"),
+    "internship experience": ("experience", "实习经历"),
+    "project experience": ("projects", "项目经历"),
+    "project experiences": ("projects", "项目经历"),
+    "professional skills": ("skills", "专业技能"),
+    "skills": ("skills", "专业技能"),
+    "self-evaluation": ("summary", "自我评价"),
+    "self evaluation": ("summary", "自我评价"),
+}
+
+_BAD_NAME_WORDS = {
+    "skills",
+    "skill",
+    "resume",
+    "education",
+    "educational",
+    "experience",
+    "experiences",
+    "information",
+    "background",
+    "personal",
+    "project",
+    "projects",
+    "evaluation",
+    "professional",
+    "internship",
+    "summary",
+    "profile",
+    "contact",
+    "objective",
 }
 
 
@@ -77,12 +125,56 @@ def _looks_like_person_name(text: str) -> bool:
     t = (text or "").strip()
     if not t or not (2 <= len(t) <= 8):
         return False
-    skip = ("简历", "自我", "工作", "项目", "教育", "技能", "经历", "概述", "评价", "总结", "联系", "基本", "信息", "意向")
+    low = t.lower()
+    if low in _SKIP_TITLES or low in _BAD_NAME_WORDS:
+        return False
+    skip = (
+        "简历",
+        "自我",
+        "工作",
+        "项目",
+        "教育",
+        "技能",
+        "经历",
+        "概述",
+        "评价",
+        "总结",
+        "联系",
+        "基本",
+        "信息",
+        "意向",
+        "姓名",
+        "电话",
+        "邮箱",
+        "院校",
+    )
     if any(k in t for k in skip):
         return False
+    # 纯英文单词（如 Skills）不当作姓名
+    if re.fullmatch(r"[A-Za-z][A-Za-z .·'-]{0,20}", t):
+        if low in _BAD_NAME_WORDS or " " not in t and len(t) <= 12:
+            # 单个英文词基本都不是中文简历姓名
+            return False
     if re.fullmatch(r"[\u4e00-\u9fff]{2,4}", t):
         return True
-    return bool(re.fullmatch(r"[A-Za-z][A-Za-z .·'-]{1,20}", t))
+    return bool(re.fullmatch(r"[A-Za-z]+\s+[A-Za-z]+(?:\s+[A-Za-z]+)?", t))
+
+
+def _is_chrome_line(line: str) -> bool:
+    s = (line or "").strip()
+    if not s:
+        return True
+    low = s.lower()
+    if low in _SKIP_TITLES or low in _EN_SECTION_MAP:
+        return True
+    if s in ("个人简历", "简历", "RESUME", "PERSONAL RESUME"):
+        return True
+    # 纯英文副标题行
+    if re.fullmatch(r"[A-Za-z][A-Za-z /&-]{2,40}", s) and low in _BAD_NAME_WORDS.union(
+        {k.split()[0] for k in _EN_SECTION_MAP}
+    ):
+        return True
+    return False
 
 
 def _normalize_body(text: str) -> str:
@@ -90,24 +182,31 @@ def _normalize_body(text: str) -> str:
     t = (text or "").replace("\r\n", "\n").strip()
     if not t:
         return ""
-    # Collapse huge spaces but keep single newlines
     t = re.sub(r"[ \t]+\n", "\n", t)
     t = re.sub(r"\n{3,}", "\n\n", t)
-    # If almost no newlines, split on punctuation / bullets
     if t.count("\n") < 2 and len(t) > 60:
         t = re.sub(r"([。！？；;])\s*", r"\1\n", t)
         t = re.sub(r"\s*[•●◆▪]\s*", "\n• ", t)
         t = re.sub(r"(?:^|[\n])\s*(\d+[\.、）)])\s*", r"\n\1 ", t)
-    # Strip decorative resume words leaked into body
+
     junk = ("PERSONAL RESUME", "个人简历", "RESUME")
     lines = []
     for ln in t.splitlines():
         s = ln.strip()
         if not s:
             continue
+        if _is_chrome_line(s):
+            continue
         if s.upper() in {j.upper() for j in junk} or s in junk:
             continue
         if s in ("简历内容",):
+            continue
+        # 去掉行首粘连的英文副标题：如 "Educational background某某大学"
+        for en in sorted(_EN_SECTION_MAP.keys(), key=len, reverse=True):
+            if s.lower().startswith(en):
+                s = s[len(en) :].lstrip(" ·:-—")
+                break
+        if not s or _is_chrome_line(s):
             continue
         lines.append(s)
     return "\n".join(lines).strip()
@@ -124,12 +223,14 @@ def _split_period(text: str) -> tuple[str, str]:
 
 def _match_section_header(line: str) -> tuple[str, str] | None:
     s = (line or "").strip()
-    if not s or len(s) > 24:
+    if not s or len(s) > 40:
         return None
-    # Exact / prefix match against known headers
+    low = s.lower()
+    if low in _EN_SECTION_MAP:
+        return _EN_SECTION_MAP[low]
     for keys, kind, label in _SECTION_DEFS:
         for k in keys:
-            if s == k or s.startswith(k) or k in s and len(s) <= len(k) + 4:
+            if s == k or s.startswith(k) or (k in s and len(s) <= len(k) + 4):
                 return kind, label
     return None
 

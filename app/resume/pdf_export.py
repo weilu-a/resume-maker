@@ -59,12 +59,23 @@ def soft_break(text: Any, width: int = 14) -> Markup:
     """Force line breaks for PDF (xhtml2pdf ignores CSS word-break on CJK)."""
     if text is None:
         return Markup("")
+    # Already wrapped Markup from a previous fmt/soft_break call
+    if isinstance(text, Markup) and "<br" in str(text).lower():
+        return text
     s = str(text)
     if not s:
         return Markup("")
-    break_after = set("，。；：、？！,.;:!?（）()【】[]")
+    # Strip accidental HTML from AI / parsers
+    s = re.sub(r"<br\s*/?>", "\n", s, flags=re.I)
+    s = re.sub(r"<[^>]+>", "", s)
+    break_after = set("，。；：、？！,.;:!?）)」』】》>")
+    soft_after = set(" ·・/|\\-—–")
     parts: list[str] = []
+    max_w = max(6, int(width))
     for line in s.replace("\r\n", "\n").split("\n"):
+        if not line.strip():
+            parts.append("")
+            continue
         buf: list[str] = []
         count = 0
         for ch in line:
@@ -73,7 +84,12 @@ def soft_break(text: Any, width: int = 14) -> Markup:
                 count = 0
                 continue
             count += 1
-            if count >= max(4, int(width)):
+            # Prefer soft break points near the limit
+            if count >= max_w - 2 and ch in soft_after:
+                buf.append("\n")
+                count = 0
+                continue
+            if count >= max_w:
                 buf.append("\n")
                 count = 0
         parts.append("".join(buf))
@@ -96,14 +112,82 @@ def _jinja_env(template_id: str) -> Environment:
     return env
 
 
+def _photo_to_data_uri(photo: str) -> str:
+    """Embed local image as data URI so xhtml2pdf can render it (file:// + 中文路径常失败)."""
+    if not photo:
+        return ""
+    raw = str(photo).strip()
+    if raw.startswith("data:"):
+        return raw
+
+    path: Path | None = None
+    if raw.startswith("file:"):
+        from urllib.parse import unquote, urlparse
+        from urllib.request import url2pathname
+
+        parsed = urlparse(raw)
+        local = url2pathname(unquote(parsed.path))
+        # Windows: url2pathname may yield /H:/... 
+        if re.match(r"^/[A-Za-z]:", local):
+            local = local[1:]
+        path = Path(local)
+    else:
+        path = Path(raw)
+
+    if not path.exists() or not path.is_file():
+        return ""
+
+    import base64
+    import mimetypes
+
+    mime, _ = mimetypes.guess_type(str(path))
+    if not mime or not mime.startswith("image/"):
+        suffix = path.suffix.lower()
+        mime = {
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".webp": "image/webp",
+            ".gif": "image/gif",
+        }.get(suffix, "image/jpeg")
+    data = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{data}"
+
+
 def payload_to_context(payload: dict[str, Any]) -> dict[str, Any]:
     """Normalize form / polished payload into template context."""
     photo = payload.get("photo_path") or payload.get("photo_uri") or ""
-    if photo and not str(photo).startswith("file:"):
-        p = Path(str(photo))
-        photo_uri = p.resolve().as_uri() if p.exists() else ""
-    else:
-        photo_uri = str(photo) if photo else ""
+    photo_uri = _photo_to_data_uri(str(photo) if photo else "")
+
+    experiences = []
+    for e in payload.get("experiences") or []:
+        experiences.append(
+            {
+                "company": e.get("company") or "",
+                "period": e.get("period") or "",
+                "title": e.get("title") or "",
+                "description": e.get("description") or "",
+            }
+        )
+    education = []
+    for ed in payload.get("education") or []:
+        education.append(
+            {
+                "school": ed.get("school") or "",
+                "period": ed.get("period") or "",
+                "degree": ed.get("degree") or "",
+                "major": ed.get("major") or "",
+            }
+        )
+    projects = []
+    for p in payload.get("projects") or []:
+        projects.append(
+            {
+                "name": p.get("name") or "",
+                "period": p.get("period") or "",
+                "description": p.get("description") or "",
+            }
+        )
 
     return {
         "name": payload.get("name", "") or "",
@@ -112,9 +196,9 @@ def payload_to_context(payload: dict[str, Any]) -> dict[str, Any]:
         "summary": payload.get("summary", "") or "",
         "intent": payload.get("intent", "") or "",
         "photo_uri": photo_uri,
-        "experiences": payload.get("experiences") or [],
-        "education": payload.get("education") or [],
-        "projects": payload.get("projects") or [],
+        "experiences": experiences,
+        "education": education,
+        "projects": projects,
         "skills": payload.get("skills", "") or "",
     }
 

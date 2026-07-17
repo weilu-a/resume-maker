@@ -113,38 +113,27 @@
 </section>
 
 <section>
-<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:briefcase"></iconify-icon>工作经历</h3>
-<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3">
-<input id="exp-company" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="公司名称" value="某某科技有限公司"/>
-<div class="grid grid-cols-2 gap-3">
-<input id="exp-title" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="职位" value="高级前端开发工程师"/>
-<input id="exp-period" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="时间" value="2021.06 - 至今"/>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold flex items-center"><iconify-icon class="mr-2" icon="ph:briefcase"></iconify-icon>工作经历</h3>
+<button type="button" id="btn-add-exp" class="text-xs px-3 py-1.5 rounded-lg border border-[#3A3A3A] text-[#4F8CFF] hover:bg-[#4F8CFF]/10 transition-colors">+ 添加</button>
 </div>
-<textarea id="exp-desc" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-xs h-24 outline-none" placeholder="工作描述">负责公司网站的开发和维护。使用了 Vue 框架，修复了很多 Bug。参与了几个新功能的上线。</textarea>
-</div>
+<div id="exp-list" class="space-y-3"></div>
 </section>
 
 <section>
-<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:graduation-cap"></iconify-icon>教育背景</h3>
-<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3">
-<input id="edu-school" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="某名牌大学"/>
-<div class="grid grid-cols-3 gap-3">
-<input id="edu-degree" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="本科"/>
-<input id="edu-major" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="计算机科学与技术"/>
-<input id="edu-period" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="2017.09 - 2021.06"/>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold flex items-center"><iconify-icon class="mr-2" icon="ph:graduation-cap"></iconify-icon>教育背景</h3>
+<button type="button" id="btn-add-edu" class="text-xs px-3 py-1.5 rounded-lg border border-[#3A3A3A] text-[#4F8CFF] hover:bg-[#4F8CFF]/10 transition-colors">+ 添加</button>
 </div>
-</div>
+<div id="edu-list" class="space-y-3"></div>
 </section>
 
 <section>
-<h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:code"></iconify-icon>项目经历</h3>
-<div class="p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3">
-<div class="grid grid-cols-2 gap-3">
-<input id="proj-name" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="Resume Studio 简历工坊"/>
-<input id="proj-period" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" value="2024.01 - 2024.06"/>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold flex items-center"><iconify-icon class="mr-2" icon="ph:code"></iconify-icon>项目经历</h3>
+<button type="button" id="btn-add-proj" class="text-xs px-3 py-1.5 rounded-lg border border-[#3A3A3A] text-[#4F8CFF] hover:bg-[#4F8CFF]/10 transition-colors">+ 添加</button>
 </div>
-<textarea id="proj-desc" class="w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-xs h-20 outline-none">基于 AI 的简历辅助生成系统，帮助求职者快速打造专业简历。</textarea>
-</div>
+<div id="proj-list" class="space-y-3"></div>
 </section>
 </div>
 </div>

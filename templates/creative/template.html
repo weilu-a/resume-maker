@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -15,7 +15,7 @@
   .item { margin-bottom: 10px; }
   .left { font-weight: bold; }
   .right { float: right; color: #666; font-size: 10px; }
-  .desc { white-space: pre-wrap; color: #333; margin-top: 4px; }
+  .desc { word-wrap: break-word; word-break: break-all; white-space: normal; color: #333; margin-top: 4px; }
   .clear { clear: both; }
 </style>
 </head>
@@ -25,11 +25,11 @@
     <h1>{{ name }}</h1>
     <div class="meta">{{ phone }}<br/>{{ email }}</div>
     {% if skills %}
-    <div class="side-h">技能</div>
-    <div class="meta">{{ skills }}</div>
+    <div class="side-h">鎶€鑳?/div>
+    <div class="meta">{{ skills|fmt(16) }}</div>
     {% endif %}
     {% if education %}
-    <div class="side-h">教育</div>
+    <div class="side-h">鏁欒偛</div>
     {% for ed in education %}
     <div class="meta" style="margin-bottom:8px;"><b>{{ ed.school }}</b><br/>{{ ed.degree }} {{ ed.major }}<br/>{{ ed.period }}</div>
     {% endfor %}
@@ -37,27 +37,27 @@
   </div>
   <div class="main">
     {% if summary %}
-    <h2>个人概述</h2>
-    <p>{{ summary }}</p>
+    <h2>涓汉姒傝堪</h2>
+    <p>{{ summary|fmt(22) }}</p>
     {% endif %}
     {% if experiences %}
-    <h2>工作经历</h2>
+    <h2>宸ヤ綔缁忓巻</h2>
     {% for e in experiences %}
     <div class="item">
       <span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span>
       <div class="clear"></div>
       {% if e.title %}<div style="color:#0f766e;margin:2px 0;">{{ e.title }}</div>{% endif %}
-      <div class="desc">{{ e.description }}</div>
+      <div class="desc">{{ e.description|fmt(18) }}</div>
     </div>
     {% endfor %}
     {% endif %}
     {% if projects %}
-    <h2>项目经历</h2>
+    <h2>椤圭洰缁忓巻</h2>
     {% for p in projects %}
     <div class="item">
       <span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span>
       <div class="clear"></div>
-      <div class="desc">{{ p.description }}</div>
+      <div class="desc">{{ p.description|fmt(18) }}</div>
     </div>
     {% endfor %}
     {% endif %}

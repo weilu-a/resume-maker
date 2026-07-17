@@ -162,17 +162,13 @@ class ApiBridge:
             result = optimize_resume(pdf_path)
             self._last_optimize_result = result
             tid = template_id or default_template_id()
+            # 只渲染预览，不在切换模板时落盘；首次优化也不批量写 PDF
             html_preview = render_optimized_html(result, tid)
-            try:
-                exported = export_optimized(result, tid)
-                self._last_optimized_pdf = exported.get("pdf_path")
-            except Exception:
-                exported = {}
             slim = {k: v for k, v in result.items() if k != "raw_text"}
             slim["raw_preview"] = (result.get("raw_text") or "")[:500]
             slim["preview_html"] = html_preview.get("html", "")
-            slim["preview_url"] = exported.get("preview_url", "")
-            slim["pdf_path"] = exported.get("pdf_path", "")
+            slim["preview_url"] = ""
+            slim["pdf_path"] = ""
             slim["template_id"] = html_preview.get("template_id", tid)
             slim["resume_name"] = html_preview.get("name", "")
             return slim
@@ -180,20 +176,12 @@ class ApiBridge:
             return {"ok": False, "error": str(e)}
 
     def preview_optimized(self, template_id: str = "") -> dict[str, Any]:
-        """Re-render optimized resume HTML (and refresh PDF) for another template."""
+        """Re-render optimized resume HTML only (no PDF write on template switch)."""
         try:
             if not self._last_optimize_result:
                 return {"ok": False, "error": "请先完成简历优化"}
             tid = template_id or default_template_id()
-            html_preview = render_optimized_html(self._last_optimize_result, tid)
-            try:
-                exported = export_optimized(self._last_optimize_result, tid)
-                self._last_optimized_pdf = exported.get("pdf_path")
-                html_preview["pdf_path"] = exported.get("pdf_path", "")
-                html_preview["preview_url"] = exported.get("preview_url", "")
-            except Exception as e:
-                html_preview["pdf_error"] = str(e)
-            return html_preview
+            return render_optimized_html(self._last_optimize_result, tid)
         except Exception as e:
             return {"ok": False, "error": str(e)}
 
@@ -201,9 +189,8 @@ class ApiBridge:
         try:
             if not self._last_optimize_result:
                 return {"ok": False, "error": "请先完成简历优化"}
-            exported = export_optimized(
-                self._last_optimize_result, template_id or default_template_id()
-            )
+            tid = template_id or default_template_id()
+            exported = export_optimized(self._last_optimize_result, tid)
             self._last_optimized_pdf = exported.get("pdf_path")
             return exported
         except Exception as e:

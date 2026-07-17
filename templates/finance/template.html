@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -13,55 +13,55 @@
   .item { margin-bottom: 9px; }
   .left { font-weight: bold; }
   .right { float: right; color: #78716c; font-size: 10px; }
-  .desc { white-space: pre-wrap; }
+  .desc { word-wrap: break-word; word-break: break-all; white-space: normal; }
   .clear { clear: both; }
 </style>
 </head>
 <body>
   {% if photo_uri %}<img class="photo" src="{{ photo_uri }}" alt="photo"/>{% endif %}
   <h1>{{ name }}</h1>
-  <div class="meta">{{ phone }}{% if phone and email %} · {% endif %}{{ email }}</div>
+  <div class="meta">{{ phone }}{% if phone and email %} 路 {% endif %}{{ email }}</div>
   <div class="bar"></div>
   <div class="clear"></div>
-  {% if summary %}<p>{{ summary }}</p>{% endif %}
+  {% if summary %}<p>{{ summary|fmt(22) }}</p>{% endif %}
 
   {% if experiences %}
-  <h2>工作经历</h2>
+  <h2>宸ヤ綔缁忓巻</h2>
   {% for e in experiences %}
   <div class="item">
     <span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span>
     <div class="clear"></div>
     {% if e.title %}<div style="color:#92400e;">{{ e.title }}</div>{% endif %}
-    <div class="desc">{{ e.description }}</div>
+    <div class="desc">{{ e.description|fmt(18) }}</div>
   </div>
   {% endfor %}
   {% endif %}
 
   {% if projects %}
-  <h2>项目经验</h2>
+  <h2>椤圭洰缁忛獙</h2>
   {% for p in projects %}
   <div class="item">
     <span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span>
     <div class="clear"></div>
-    <div class="desc">{{ p.description }}</div>
+    <div class="desc">{{ p.description|fmt(18) }}</div>
   </div>
   {% endfor %}
   {% endif %}
 
   {% if education %}
-  <h2>教育背景</h2>
+  <h2>鏁欒偛鑳屾櫙</h2>
   {% for ed in education %}
   <div class="item">
     <span class="left">{{ ed.school }}</span><span class="right">{{ ed.period }}</span>
     <div class="clear"></div>
-    <div class="meta">{{ ed.degree }} · {{ ed.major }}</div>
+    <div class="meta">{{ ed.degree }} 路 {{ ed.major }}</div>
   </div>
   {% endfor %}
   {% endif %}
 
   {% if skills %}
-  <h2>核心能力</h2>
-  <div class="desc">{{ skills }}</div>
+  <h2>鏍稿績鑳藉姏</h2>
+  <div class="desc">{{ skills|fmt(16) }}</div>
   {% endif %}
 </body>
 </html>

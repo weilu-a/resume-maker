@@ -11,9 +11,9 @@
   td.side { width: 34%; max-width: 34%; height: 297mm; background: #f3f0f7; vertical-align: top; padding: 0; }
   td.main { width: 66%; max-width: 66%; height: 297mm; vertical-align: top; padding: 28px 20px 40px; }
   .side-inner { padding: 20px 16px; width: 100%; max-width: 100%; }
-  .name-bar { background: #9b8bb8; color: #fff; padding: 14px 14px; margin: 0 0 16px 0; }
-  .name-bar h1 { margin: 0; font-size: 18px; font-weight: bold; word-wrap: break-word; }
-  .name-bar .intent { margin-top: 4px; font-size: 10px; opacity: 0.95; word-wrap: break-word; }
+  .name-bar { background: transparent; color: #2d2d2d; padding: 4px 16px 12px; margin: 0 0 8px 0; }
+  .name-bar h1 { margin: 0; font-size: 20px; font-weight: bold; color: #2d2d2d; word-wrap: break-word; }
+  .name-bar .intent { margin-top: 6px; font-size: 10px; color: #666; word-wrap: break-word; }
   .side-h { background: #9b8bb8; color: #fff; font-size: 11px; font-weight: bold; padding: 5px 10px; margin: 18px 0 10px; }
   .side-meta { display: block; width: 100%; max-width: 100%; font-size: 9.5px; color: #444; line-height: 1.85; word-wrap: break-word; word-break: break-all; white-space: normal; }
   .side-meta div { display: block; width: 100%; max-width: 100%; word-wrap: break-word; word-break: break-all; }
@@ -35,10 +35,10 @@
 <td class="side">
   <div class="side-inner">
     {% if photo_uri %}<img class="photo" src="{{ photo_uri }}" alt="photo"/>{% endif %}
-  </div>
-  <div class="name-bar">
-    <h1>{{ name or "姓名" }}</h1>
-    {% if intent %}<div class="intent">求职意向：{{ intent|soft_break(12) }}</div>{% endif %}
+    <div class="name-bar">
+      <h1>{{ name or "姓名" }}</h1>
+      {% if intent %}<div class="intent">求职意向：{{ intent|soft_break(12) }}</div>{% endif %}
+    </div>
   </div>
   <div class="side-inner">
     <div class="side-h">基本信息</div>
@@ -81,7 +81,7 @@
     <div class="row"><span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span></div>
     <div class="clear"></div>
     {% if e.title %}<div class="title">{{ e.title }}</div>{% endif %}
-    <div class="desc">{{ e.description|fmt(18) }}</div>
+    <div class="desc">{{ e.description|fmt(16) }}</div>
   </div>
   {% endfor %}
   {% endif %}
@@ -91,7 +91,7 @@
   <div class="item">
     <div class="row"><span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span></div>
     <div class="clear"></div>
-    <div class="desc">{{ p.description|fmt(18) }}</div>
+    <div class="desc">{{ p.description|fmt(16) }}</div>
   </div>
   {% endfor %}
   {% endif %}

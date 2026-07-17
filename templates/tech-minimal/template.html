@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
@@ -15,7 +15,7 @@
   .left { float: left; font-weight: bold; }
   .right { float: right; color: #666; font-size: 10px; }
   .title { font-style: italic; color: #444; margin: 2px 0 4px; }
-  .desc { white-space: pre-wrap; color: #333; }
+  .desc { word-wrap: break-word; word-break: break-all; white-space: normal; color: #333; }
   .clear { clear: both; }
 </style>
 </head>
@@ -26,47 +26,47 @@
     {% endif %}
     <h1>{{ name }}</h1>
     <div class="meta">{{ phone }}{% if phone and email %} | {% endif %}{{ email }}</div>
-    {% if summary %}<p style="margin-top:8px;">{{ summary }}</p>{% endif %}
+    {% if summary %}<p style="margin-top:8px;">{{ summary|fmt(22) }}</p>{% endif %}
     <div class="clear"></div>
   </div>
 
   {% if experiences %}
-  <h2>工作经历</h2>
+  <h2>宸ヤ綔缁忓巻</h2>
   {% for e in experiences %}
   <div class="item">
     <div class="row"><span class="left">{{ e.company }}</span><span class="right">{{ e.period }}</span></div>
     <div class="clear"></div>
     {% if e.title %}<div class="title">{{ e.title }}</div>{% endif %}
-    <div class="desc">{{ e.description }}</div>
+    <div class="desc">{{ e.description|fmt(18) }}</div>
   </div>
   {% endfor %}
   {% endif %}
 
   {% if projects %}
-  <h2>项目经历</h2>
+  <h2>椤圭洰缁忓巻</h2>
   {% for p in projects %}
   <div class="item">
     <div class="row"><span class="left">{{ p.name }}</span><span class="right">{{ p.period }}</span></div>
     <div class="clear"></div>
-    <div class="desc">{{ p.description }}</div>
+    <div class="desc">{{ p.description|fmt(18) }}</div>
   </div>
   {% endfor %}
   {% endif %}
 
   {% if education %}
-  <h2>教育背景</h2>
+  <h2>鏁欒偛鑳屾櫙</h2>
   {% for ed in education %}
   <div class="item">
     <div class="row"><span class="left">{{ ed.school }}</span><span class="right">{{ ed.period }}</span></div>
     <div class="clear"></div>
-    <div class="meta">{{ ed.degree }}{% if ed.major %} · {{ ed.major }}{% endif %}</div>
+    <div class="meta">{{ ed.degree }}{% if ed.major %} 路 {{ ed.major }}{% endif %}</div>
   </div>
   {% endfor %}
   {% endif %}
 
   {% if skills %}
-  <h2>专业技能</h2>
-  <div class="desc">{{ skills }}</div>
+  <h2>涓撲笟鎶€鑳?/h2>
+  <div class="desc">{{ skills|fmt(16) }}</div>
   {% endif %}
 
   <p style="text-align:center;color:#aaa;font-size:8px;margin-top:24px;">Powered by Resume Studio AI</p>

@@ -12,30 +12,183 @@
     return document.getElementById(id);
   }
 
+  function bindPreviewInputs(root) {
+    if (!root) return;
+    root.querySelectorAll("input, textarea").forEach(function (el) {
+      el.addEventListener("input", scheduleLivePreview);
+    });
+  }
+
+  function makeExpCard(data) {
+    data = data || {};
+    var card = document.createElement("div");
+    card.className =
+      "exp-item p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3";
+    card.innerHTML =
+      '<div class="flex justify-between items-center">' +
+      '<span class="text-xs text-[#666666]">工作经历</span>' +
+      '<button type="button" class="btn-remove-item text-[11px] text-[#AAAAAA] hover:text-red-400">删除</button>' +
+      "</div>" +
+      '<input class="exp-company w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="公司名称"/>' +
+      '<div class="grid grid-cols-2 gap-3">' +
+      '<input class="exp-title w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="职位"/>' +
+      '<input class="exp-period w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="时间"/>' +
+      "</div>" +
+      '<textarea class="exp-desc w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-xs h-24 outline-none" placeholder="工作描述"></textarea>';
+    card.querySelector(".exp-company").value = data.company || "";
+    card.querySelector(".exp-title").value = data.title || "";
+    card.querySelector(".exp-period").value = data.period || "";
+    card.querySelector(".exp-desc").value = data.description || "";
+    card.querySelector(".btn-remove-item").addEventListener("click", function () {
+      var list = $("exp-list");
+      if (list.querySelectorAll(".exp-item").length <= 1) {
+        ResumeBridge.showToast("至少保留一条工作经历", "warn");
+        return;
+      }
+      card.remove();
+      scheduleLivePreview();
+    });
+    bindPreviewInputs(card);
+    return card;
+  }
+
+  function makeEduCard(data) {
+    data = data || {};
+    var card = document.createElement("div");
+    card.className =
+      "edu-item p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3";
+    card.innerHTML =
+      '<div class="flex justify-between items-center">' +
+      '<span class="text-xs text-[#666666]">教育背景</span>' +
+      '<button type="button" class="btn-remove-item text-[11px] text-[#AAAAAA] hover:text-red-400">删除</button>' +
+      "</div>" +
+      '<input class="edu-school w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="学校"/>' +
+      '<div class="grid grid-cols-3 gap-3">' +
+      '<input class="edu-degree w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="学历"/>' +
+      '<input class="edu-major w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="专业"/>' +
+      '<input class="edu-period w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="时间"/>' +
+      "</div>";
+    card.querySelector(".edu-school").value = data.school || "";
+    card.querySelector(".edu-degree").value = data.degree || "";
+    card.querySelector(".edu-major").value = data.major || "";
+    card.querySelector(".edu-period").value = data.period || "";
+    card.querySelector(".btn-remove-item").addEventListener("click", function () {
+      var list = $("edu-list");
+      if (list.querySelectorAll(".edu-item").length <= 1) {
+        ResumeBridge.showToast("至少保留一条教育背景", "warn");
+        return;
+      }
+      card.remove();
+      scheduleLivePreview();
+    });
+    bindPreviewInputs(card);
+    return card;
+  }
+
+  function makeProjCard(data) {
+    data = data || {};
+    var card = document.createElement("div");
+    card.className =
+      "proj-item p-4 bg-[#252525] rounded-xl border border-[#3A3A3A] space-y-3";
+    card.innerHTML =
+      '<div class="flex justify-between items-center">' +
+      '<span class="text-xs text-[#666666]">项目经历</span>' +
+      '<button type="button" class="btn-remove-item text-[11px] text-[#AAAAAA] hover:text-red-400">删除</button>' +
+      "</div>" +
+      '<div class="grid grid-cols-2 gap-3">' +
+      '<input class="proj-name w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="项目名称"/>' +
+      '<input class="proj-period w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-sm outline-none" placeholder="时间"/>' +
+      "</div>" +
+      '<textarea class="proj-desc w-full bg-[#1A1A1A] border border-[#3A3A3A] rounded-lg px-3 py-2 text-xs h-20 outline-none" placeholder="项目描述"></textarea>';
+    card.querySelector(".proj-name").value = data.name || "";
+    card.querySelector(".proj-period").value = data.period || "";
+    card.querySelector(".proj-desc").value = data.description || "";
+    card.querySelector(".btn-remove-item").addEventListener("click", function () {
+      var list = $("proj-list");
+      if (list.querySelectorAll(".proj-item").length <= 1) {
+        ResumeBridge.showToast("至少保留一条项目经历", "warn");
+        return;
+      }
+      card.remove();
+      scheduleLivePreview();
+    });
+    bindPreviewInputs(card);
+    return card;
+  }
+
+  function initEntryLists() {
+    var expList = $("exp-list");
+    var eduList = $("edu-list");
+    var projList = $("proj-list");
+    expList.appendChild(
+      makeExpCard({
+        company: "某某科技有限公司",
+        title: "高级前端开发工程师",
+        period: "2021.06 - 至今",
+        description:
+          "负责公司网站的开发和维护。使用了 Vue 框架，修复了很多 Bug。参与了几个新功能的上线。",
+      })
+    );
+    eduList.appendChild(
+      makeEduCard({
+        school: "某名牌大学",
+        degree: "本科",
+        major: "计算机科学与技术",
+        period: "2017.09 - 2021.06",
+      })
+    );
+    projList.appendChild(
+      makeProjCard({
+        name: "Resume Studio 简历工坊",
+        period: "2024.01 - 2024.06",
+        description:
+          "基于 AI 的简历辅助生成系统，帮助求职者快速打造专业简历。",
+      })
+    );
+    $("btn-add-exp").addEventListener("click", function () {
+      expList.appendChild(makeExpCard({}));
+      scheduleLivePreview();
+    });
+    $("btn-add-edu").addEventListener("click", function () {
+      eduList.appendChild(makeEduCard({}));
+      scheduleLivePreview();
+    });
+    $("btn-add-proj").addEventListener("click", function () {
+      projList.appendChild(makeProjCard({}));
+      scheduleLivePreview();
+    });
+  }
+
   function collectForm() {
-    var experiences = [
-      {
-        company: $("exp-company").value.trim(),
-        period: $("exp-period").value.trim(),
-        title: $("exp-title").value.trim(),
-        description: $("exp-desc").value.trim(),
-      },
-    ];
-    var education = [
-      {
-        school: $("edu-school").value.trim(),
-        period: $("edu-period").value.trim(),
-        degree: $("edu-degree").value.trim(),
-        major: $("edu-major").value.trim(),
-      },
-    ];
-    var projects = [
-      {
-        name: $("proj-name").value.trim(),
-        period: $("proj-period").value.trim(),
-        description: $("proj-desc").value.trim(),
-      },
-    ];
+    var experiences = [];
+    document.querySelectorAll("#exp-list .exp-item").forEach(function (card) {
+      var item = {
+        company: card.querySelector(".exp-company").value.trim(),
+        period: card.querySelector(".exp-period").value.trim(),
+        title: card.querySelector(".exp-title").value.trim(),
+        description: card.querySelector(".exp-desc").value.trim(),
+      };
+      if (item.company || item.title || item.description) experiences.push(item);
+    });
+    var education = [];
+    document.querySelectorAll("#edu-list .edu-item").forEach(function (card) {
+      var item = {
+        school: card.querySelector(".edu-school").value.trim(),
+        period: card.querySelector(".edu-period").value.trim(),
+        degree: card.querySelector(".edu-degree").value.trim(),
+        major: card.querySelector(".edu-major").value.trim(),
+      };
+      if (item.school || item.major || item.degree) education.push(item);
+    });
+    var projects = [];
+    document.querySelectorAll("#proj-list .proj-item").forEach(function (card) {
+      var item = {
+        name: card.querySelector(".proj-name").value.trim(),
+        period: card.querySelector(".proj-period").value.trim(),
+        description: card.querySelector(".proj-desc").value.trim(),
+      };
+      if (item.name || item.description) projects.push(item);
+    });
     return {
       template_id: selectedTemplateId,
       name: $("field-name").value.trim(),
@@ -47,9 +200,7 @@
       photo_uri: photoUri,
       experiences: experiences,
       education: education,
-      projects: projects.filter(function (p) {
-        return p.name || p.description;
-      }),
+      projects: projects,
     };
   }
 
@@ -334,27 +485,13 @@
   };
 
   document.addEventListener("DOMContentLoaded", async function () {
-    [
-      "field-name",
-      "field-phone",
-      "field-email",
-      "field-summary",
-      "field-skills",
-      "exp-company",
-      "exp-period",
-      "exp-title",
-      "exp-desc",
-      "edu-school",
-      "edu-degree",
-      "edu-major",
-      "edu-period",
-      "proj-name",
-      "proj-period",
-      "proj-desc",
-    ].forEach(function (id) {
-      var el = $(id);
-      if (el) el.addEventListener("input", scheduleLivePreview);
-    });
+    initEntryLists();
+    ["field-name", "field-phone", "field-email", "field-summary", "field-skills"].forEach(
+      function (id) {
+        var el = $(id);
+        if (el) el.addEventListener("input", scheduleLivePreview);
+      }
+    );
     $("btn-pick-photo").addEventListener("click", window.pickPhoto);
     $("btn-export-pdf").addEventListener("click", window.exportPdfDone);
     $("btn-open-folder").addEventListener("click", window.openOutputFolder);

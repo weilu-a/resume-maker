@@ -236,6 +236,8 @@ def optimize_resume_text(raw_text: str, model: str = DEFAULT_MODEL) -> dict[str,
         "optimized_sections 的 title 必须使用这些标准标题之一："
         "基本信息、教育背景、工作经历、实习经历、项目经历、校园经历、专业技能、自我评价、求职意向。"
         "content 用换行分段，不要把整份简历塞进某一个 content。"
+        "不要在 content 里写英文栏目标题（如 Personal information / Educational background / Work experience / Skills）。"
+        "不要把 Skills、Resume 等英文词当作姓名。"
         "保留事实，强化动词、量化成果与行业关键词。"
     )
     prompt = f"请优化以下简历文本：\n\n{raw_text[:6000]}"
