@@ -12,6 +12,7 @@ datas = [
     (str(root / "frontend"), "frontend"),
     (str(root / "templates"), "templates"),
     (str(root / "fonts"), "fonts"),
+    (str(root / ".env"), "."),
 ]
 # PDF 简历模板元数据（若存在）
 models_resume = root / "models" / "resume"
@@ -46,7 +47,7 @@ hidden = [
     "app.utils.config",
 ]
 
-for pkg in ("reportlab", "xhtml2pdf", "pdfplumber", "PIL"):
+for pkg in ("reportlab", "xhtml2pdf", "pdfplumber", "PIL", "pythonnet", "clr_loader"):
     pkg_datas, pkg_binaries, pkg_hidden = collect_all(pkg)
     datas += pkg_datas
     binaries += pkg_binaries
@@ -56,6 +57,8 @@ hidden += collect_submodules("reportlab")
 hidden += collect_submodules("reportlab.graphics.barcode")
 hidden += collect_submodules("xhtml2pdf")
 hidden += collect_submodules("app")
+hidden += collect_submodules("pythonnet")
+hidden += collect_submodules("clr_loader")
 hidden = sorted(set(hidden))
 
 a = Analysis(

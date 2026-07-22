@@ -60,11 +60,14 @@ class ApiBridge:
     def pick_photo(self) -> dict[str, Any]:
         if not self._window:
             return {"ok": False, "error": "窗口未就绪"}
-        files = self._window.create_file_dialog(
-            webview.OPEN_DIALOG,
-            allow_multiple=False,
-            file_types=("图片文件 (*.png;*.jpg;*.jpeg;*.webp)",),
-        )
+        try:
+            files = self._window.create_file_dialog(
+                webview.OPEN_DIALOG,
+                allow_multiple=False,
+                file_types=("图片文件 (*.png;*.jpg;*.jpeg;*.webp)",),
+            )
+        except Exception as e:
+            return {"ok": False, "error": f"打开文件对话框失败: {str(e)}"}
         if not files:
             return {"ok": False, "cancelled": True}
         src = Path(files[0])
@@ -75,11 +78,14 @@ class ApiBridge:
     def pick_pdf(self) -> dict[str, Any]:
         if not self._window:
             return {"ok": False, "error": "窗口未就绪"}
-        files = self._window.create_file_dialog(
-            webview.OPEN_DIALOG,
-            allow_multiple=False,
-            file_types=("PDF 文件 (*.pdf)",),
-        )
+        try:
+            files = self._window.create_file_dialog(
+                webview.OPEN_DIALOG,
+                allow_multiple=False,
+                file_types=("PDF 文件 (*.pdf)",),
+            )
+        except Exception as e:
+            return {"ok": False, "error": f"打开文件对话框失败: {str(e)}"}
         if not files:
             return {"ok": False, "cancelled": True}
         src = Path(files[0])
@@ -90,15 +96,33 @@ class ApiBridge:
     def extract_pdf_text(self, pdf_path: str) -> dict[str, Any]:
         """Extract plain text from an uploaded resume PDF (pdfplumber)."""
         try:
+            path = Path(pdf_path)
+            if not path.exists():
+                return {"ok": False, "error": f"文件不存在: {pdf_path}"}
+            if not path.is_file():
+                return {"ok": False, "error": f"不是文件: {pdf_path}"}
+            
+            file_size = path.stat().st_size
+            if file_size == 0:
+                return {"ok": False, "error": "文件为空"}
+            
             text = read_pdf_text(pdf_path)
+            if not text or not text.strip():
+                return {"ok": False, "error": "未能从 PDF 提取到文字（可能是扫描件或加密文件）"}
+            
             return {
                 "ok": True,
                 "text": text,
                 "chars": len(text),
                 "preview": (text or "")[:500],
             }
+        except FileNotFoundError as e:
+            return {"ok": False, "error": f"文件未找到: {e}"}
+        except PermissionError as e:
+            return {"ok": False, "error": f"权限错误: {e}"}
         except Exception as e:
-            return {"ok": False, "error": str(e)}
+            import traceback
+            return {"ok": False, "error": f"解析失败: {str(e)}\n\n{traceback.format_exc()[:500]}"}
 
     def get_interview_opening(self, company_type: str = "bigtech") -> dict[str, Any]:
         try:

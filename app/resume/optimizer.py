@@ -98,13 +98,29 @@ def extract_pdf_text(pdf_path: str) -> str:
     path = Path(pdf_path)
     if not path.exists():
         raise FileNotFoundError(f"文件不存在: {pdf_path}")
+    
+    file_size = path.stat().st_size
+    if file_size > 10 * 1024 * 1024:
+        raise ValueError(f"文件过大（{file_size / 1024 / 1024:.1f}MB），请使用小于 10MB 的 PDF")
+    
     chunks: list[str] = []
     with pdfplumber.open(str(path)) as pdf:
+        if len(pdf.pages) > 20:
+            raise ValueError(f"PDF 页数过多（{len(pdf.pages)}页），请使用少于 20 页的 PDF")
+        
         for page in pdf.pages:
             text = page.extract_text() or ""
             if text.strip():
                 chunks.append(text.strip())
-    return "\n\n".join(chunks)
+                
+            if len(chunks) > 50:
+                break
+    
+    result = "\n\n".join(chunks)
+    if len(result) > 50000:
+        result = result[:50000] + "\n\n...（内容过长，已截断）"
+    
+    return result
 
 
 def optimize_resume(pdf_path: str) -> dict[str, Any]:
@@ -179,6 +195,8 @@ def _is_chrome_line(line: str) -> bool:
 
 def _normalize_body(text: str) -> str:
     """Make long PDF-extracted blobs readable with line breaks."""
+    if isinstance(text, (tuple, list)):
+        text = "\n".join(str(x) for x in text)
     t = (text or "").replace("\r\n", "\n").strip()
     if not t:
         return ""

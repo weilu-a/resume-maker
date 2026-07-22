@@ -240,13 +240,18 @@
 
   window.startOptimizing = async function () {
     try {
+      ResumeBridge.showToast('正在打开文件选择器...', '');
       var res = await ResumeBridge.apiCall("pick_pdf");
       if (res.ok) {
         $("upload-filename").textContent = res.name || "已选择文件";
         await runOptimize(res.path);
+      } else if (res.error) {
+        ResumeBridge.showToast('选择文件失败: ' + res.error, 'warn');
+      } else if (!res.cancelled) {
+        ResumeBridge.showToast('未选择文件', '');
       }
     } catch (e) {
-      ResumeBridge.showToast(e.message || String(e), "warn");
+      ResumeBridge.showToast('选择文件时出错: ' + (e.message || String(e)), 'warn');
     }
   };
 

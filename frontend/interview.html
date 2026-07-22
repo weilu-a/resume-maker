@@ -63,7 +63,7 @@
 <section>
 <h3 class="text-lg font-bold mb-4 flex items-center"><iconify-icon class="mr-2" icon="ph:file-upload"></iconify-icon>上传简历</h3>
 <div class="drop-zone rounded-xl p-8 text-center cursor-pointer" id="resume-drop-zone" onclick="window.pickResume()">
-<input type="file" id="resume-input" accept=".pdf" class="hidden" onchange="window.handleResumeUpload(this)"/>
+<input type="file" id="resume-input" accept=".pdf" class="hidden" onchange="window.handleResumeUpload(this)" onclick="event.stopPropagation()"/>
 <iconify-icon class="text-4xl text-[#666666] mb-4 inline-block" icon="ph:file-pdf"></iconify-icon>
 <p class="text-[#AAAAAA] text-sm mb-2">点击上传简历（PDF）</p>
 <p class="text-[#666666] text-xs">上传简历后，AI 将结合简历内容进行针对性提问</p>

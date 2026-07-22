@@ -1,5 +1,16 @@
 /* global ResumeBridge */
 (function () {
+  var isDesktopMode = false;
+  
+  function checkDesktopMode() {
+    if (window.pywebview && window.pywebview.api) {
+      isDesktopMode = true;
+    }
+  }
+  
+  checkDesktopMode();
+  document.addEventListener('_pywebviewready', checkDesktopMode);
+  
   var currentInterview = {
   id: null,
   techDirection: '',
@@ -185,7 +196,7 @@
     scrollToBottom();
   }
 
-  function showSummaryView() {
+  function showSummaryView(forceContent) {
     currentView = 'summary';
     $('setup-view').classList.add('hidden');
     $('interview-view').classList.add('hidden');
@@ -200,7 +211,9 @@
       (difficultyLabels[currentInterview.difficulty] || currentInterview.difficulty);
 
     var contentEl = $('summary-content');
-    if (currentInterview.summary) {
+    if (forceContent !== undefined) {
+      contentEl.innerHTML = forceContent;
+    } else if (currentInterview.summary) {
       contentEl.innerHTML = parseMarkdown(currentInterview.summary);
     } else {
       contentEl.innerHTML =
@@ -400,14 +413,13 @@
   }
 
   async function generateAndShowSummary() {
-    var contentEl = $('summary-content');
-    contentEl.innerHTML =
+    var loadingContent =
       '<div class="text-center text-[#666666] py-8">' +
       '<iconify-icon class="text-4xl text-[#4F8CFF] mb-4 inline-block animate-spin" icon="ph:loader"></iconify-icon>' +
       '<p>AI 正在生成面试总结...</p>' +
       '</div>';
 
-    showSummaryView();
+    showSummaryView(loadingContent);
 
     try {
       var payload = {
@@ -421,6 +433,7 @@
       };
 
       var result = await ResumeBridge.apiCall('interview_summary', JSON.stringify(payload));
+      var contentEl = $('summary-content');
 
       if (!result || !result.ok) {
         currentInterview.summary = '';
@@ -440,7 +453,8 @@
       await persistAndExit();
     } catch (e) {
       currentInterview.summary = '';
-      contentEl.innerHTML =
+      var errorContentEl = $('summary-content');
+      errorContentEl.innerHTML =
         '<div class="text-center text-[#666666] py-8">' +
         '<iconify-icon class="text-4xl text-[#FF4D4F] mb-4 inline-block" icon="ph:alert-circle"></iconify-icon>' +
         '<p>生成总结时发生错误</p>' +
@@ -521,35 +535,15 @@
     try {
       currentInterview.resumeText = currentInterview.resumeText || '';
 
-      if (currentInterview.resumePath) {
-        ResumeBridge.showToast('正在从简历 PDF 读取文字...', '');
-        var extracted = await ResumeBridge.apiCall(
-          'extract_pdf_text',
-          currentInterview.resumePath
-        );
-        if (!extracted || !extracted.ok) {
-          ResumeBridge.showToast(
-            (extracted && extracted.error) || '简历文字提取失败',
-            'warn'
-          );
-          return;
-        }
-        currentInterview.resumeText = extracted.text || '';
-        if (!currentInterview.resumeText.trim()) {
-          ResumeBridge.showToast('未能从 PDF 提取到文字（可能是扫描件）', 'warn');
-        } else {
-          ResumeBridge.showToast(
-            '已读取简历文字 ' +
-              (extracted.chars || currentInterview.resumeText.length) +
-              ' 字',
-            'ok'
-          );
-        }
-      } else if (currentInterview.resumeFile && !currentInterview.resumePath) {
+      if (!isDesktopMode && currentInterview.resumeFile && !currentInterview.resumeText) {
         ResumeBridge.showToast(
           '当前为浏览器预览，无法解析 PDF；请用 python app/main.py 启动后选择文件',
           'warn'
         );
+        currentInterview.resumeFile = null;
+        currentInterview.resumePath = '';
+        $('resume-selected').classList.add('hidden');
+        $('resume-drop-zone').classList.remove('hidden');
       }
 
       currentInterview.id = generateId();
@@ -639,26 +633,61 @@
     currentInterview.difficulty = difficulty;
   }
 
-  function applyResumeSelected(name, path) {
+  function applyResumeSelected(name, path, text) {
     currentInterview.resumeFile = name ? { name: name } : null;
     currentInterview.resumePath = path || '';
-    currentInterview.resumeText = '';
+    if (text !== undefined) {
+      currentInterview.resumeText = text;
+    }
     $('resume-filename').textContent = name || '已选择文件';
     $('resume-selected').classList.remove('hidden');
     $('resume-drop-zone').classList.add('hidden');
   }
 
+  var pickingResume = false;
+
   async function pickResume() {
+    if (pickingResume) return;
+    pickingResume = true;
     try {
+      var ready = await ResumeBridge.waitForApi(10000);
+      console.log('pickResume: waitForApi result:', ready, 'pywebview:', window.pywebview, 'api:', window.pywebview && window.pywebview.api);
+      if (!ready) {
+        console.log('pickResume: pywebview not ready, falling back to browser file input');
+        $('resume-input').click();
+        return;
+      }
+
+      isDesktopMode = true;
       var res = await ResumeBridge.apiCall('pick_pdf');
       if (res && res.cancelled) return;
       if (!res || !res.ok) {
         ResumeBridge.showToast((res && res.error) || '选择文件失败', 'warn');
         return;
       }
-      applyResumeSelected(res.name || '已选择文件', res.path || '');
+      
+      ResumeBridge.showToast('正在解析简历 PDF...', '');
+      var extracted = await ResumeBridge.apiCall('extract_pdf_text', res.path);
+      var resumeText = '';
+      if (extracted && extracted.ok) {
+        resumeText = extracted.text || '';
+        if (resumeText.trim()) {
+          ResumeBridge.showToast(
+            '简历解析成功，共 ' + (extracted.chars || resumeText.length) + ' 字',
+            'ok'
+          );
+        } else {
+          ResumeBridge.showToast('未能从 PDF 提取到文字（可能是扫描件）', 'warn');
+        }
+      } else {
+        ResumeBridge.showToast((extracted && extracted.error) || '简历解析失败', 'warn');
+      }
+      
+      applyResumeSelected(res.name || '已选择文件', res.path || '', resumeText);
     } catch (e) {
       $('resume-input').click();
+    } finally {
+      pickingResume = false;
     }
   }
 
@@ -671,10 +700,7 @@
         return;
       }
       applyResumeSelected(file.name, '');
-      ResumeBridge.showToast(
-        '已选择文件，但浏览器预览无法解析 PDF；开始面试请用桌面版',
-        'warn'
-      );
+      currentInterview.resumeFile = file;
     }
   }
 
